@@ -11,9 +11,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Covid Result',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        fontFamily: 'Foo-Regular',
       ),
       home: const RegisterView(),
     );
