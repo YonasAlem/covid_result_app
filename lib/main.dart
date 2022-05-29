@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       title: 'Covid Result',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        fontFamily: 'Foo-Regular',
+        fontFamily: 'Regular',
       ),
       home: const RegisterView(),
     );
