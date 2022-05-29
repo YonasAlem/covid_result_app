@@ -5,6 +5,9 @@ import 'package:flutter/services.dart';
 class RegisterView extends StatelessWidget {
   const RegisterView({Key? key}) : super(key: key);
 
+  final String logoSrc = 'assets/images/logo.png';
+  final String appTitle = 'Covid Result\nChecker';
+
   @override
   Widget build(BuildContext context) {
     return ScaffoldBackground(
@@ -17,6 +20,30 @@ class RegisterView extends StatelessWidget {
             statusBarColor: Colors.white,
             statusBarIconBrightness: Brightness.dark,
           ),
+        ),
+        body: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  logoSrc,
+                  height: 80,
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  appTitle,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'Black',
+                    fontSize: 26,
+                    letterSpacing: 1,
+                    color: Colors.grey[800]!,
+                  ),
+                ),
+              ],
+            )
+          ],
         ),
       ),
     );
