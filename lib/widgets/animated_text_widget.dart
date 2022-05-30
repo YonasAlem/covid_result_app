@@ -12,6 +12,7 @@ class AnimatedTextWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedTextKit(
+      totalRepeatCount: 5,
       animatedTexts: [
         ColorizeAnimatedText(
           title1,

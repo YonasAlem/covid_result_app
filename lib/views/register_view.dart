@@ -1,4 +1,3 @@
-import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:covid_result_app/utils/colors.dart';
 import 'package:covid_result_app/views/login_view.dart';
 import 'package:covid_result_app/widgets/auth_views_widgets/auth_text_field.dart';
@@ -9,7 +8,6 @@ import '../widgets/animated_text_widget.dart';
 import '../widgets/auth_views_widgets/logo_and_title.dart';
 import '../widgets/submit_button_big.dart';
 import '../widgets/submit_button_small.dart';
-import '../widgets/text_widget_big.dart';
 import '../widgets/text_widget_small.dart';
 
 class RegisterView extends StatefulWidget {
