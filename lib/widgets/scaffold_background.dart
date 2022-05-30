@@ -15,7 +15,7 @@ class ScaffoldBackground extends StatelessWidget {
       const SystemUiOverlayStyle(
         statusBarColor: Colors.white,
         statusBarIconBrightness: Brightness.dark,
-        systemNavigationBarColor: Colors.blue,
+        systemNavigationBarColor: mainColor,
         systemNavigationBarIconBrightness: Brightness.light,
       ),
     );

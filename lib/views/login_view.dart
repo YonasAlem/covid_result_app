@@ -52,14 +52,7 @@ class _LoginViewState extends State<LoginView> {
                   borderRadius: BorderRadius.circular(20),
                   color: Colors.white.withOpacity(0.9),
                   // big container shadow
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 10,
-                      spreadRadius: 1,
-                      offset: Offset(0, 10),
-                    ),
-                  ],
+                  boxShadow: const [boxShadow1],
                 ),
                 child: _formField(),
               ),
@@ -81,7 +74,7 @@ class _LoginViewState extends State<LoginView> {
           indent: 2,
           endIndent: 260,
           thickness: 3,
-          color: Colors.blue,
+          color: mainColor,
         ),
         const TextWidgetSmall(text: 'Email address'),
         const SizedBox(height: 5),

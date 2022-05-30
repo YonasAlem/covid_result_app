@@ -1,3 +1,4 @@
+import 'package:covid_result_app/utils/colors.dart';
 import 'package:flutter/material.dart';
 
 class AuthTextField extends StatefulWidget {
@@ -49,7 +50,7 @@ class _AuthTextFieldState extends State<AuthTextField> {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
           borderSide: BorderSide(
-            color: Colors.blue.withOpacity(0.3),
+            color: mainColor.withOpacity(0.3),
           ),
         ),
         suffixIcon: widget.isPassword
@@ -57,7 +58,7 @@ class _AuthTextFieldState extends State<AuthTextField> {
                 onTap: () => setState(() => isHiddenPassword = !isHiddenPassword),
                 child: Icon(
                   isHiddenPassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                  color: isHiddenPassword ? Colors.grey : Colors.blue,
+                  color: isHiddenPassword ? Colors.grey : mainColor,
                 ),
               )
             : const SizedBox(),
