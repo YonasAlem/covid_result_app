@@ -67,7 +67,7 @@ class _RegisterViewState extends State<RegisterView> {
               ),
               const SizedBox(height: 70),
               Container(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   color: Colors.white.withOpacity(0.9),
@@ -165,6 +165,29 @@ class _RegisterViewState extends State<RegisterView> {
               ),
             ),
           ),
+        ),
+        const SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              'Already have an account? ',
+              style: TextStyle(
+                color: Colors.grey,
+                letterSpacing: 1,
+              ),
+            ),
+            TextButton(
+              onPressed: () {},
+              child: const Text(
+                'Login Here.',
+                style: TextStyle(
+                  letterSpacing: 1,
+                  color: Colors.blue,
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     );
