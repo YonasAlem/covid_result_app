@@ -3,7 +3,7 @@ import 'package:covid_result_app/widgets/scaffold_background.dart';
 import 'package:flutter/material.dart';
 
 import '../utils/colors.dart';
-import '../widgets/auth_text_field.dart';
+import '../widgets/auth_views_widgets/auth_text_field.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({Key? key}) : super(key: key);
