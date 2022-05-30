@@ -1,28 +1,27 @@
-import 'package:covid_result_app/utils/colors.dart';
-import 'package:covid_result_app/views/login_view.dart';
-import 'package:covid_result_app/widgets/auth_text_field.dart';
+import 'package:covid_result_app/views/register_view.dart';
 import 'package:covid_result_app/widgets/scaffold_background.dart';
 import 'package:flutter/material.dart';
 
-class RegisterView extends StatefulWidget {
-  const RegisterView({Key? key}) : super(key: key);
+import '../utils/colors.dart';
+import '../widgets/auth_text_field.dart';
+
+class LoginView extends StatefulWidget {
+  const LoginView({Key? key}) : super(key: key);
 
   @override
-  State<RegisterView> createState() => _RegisterViewState();
+  State<LoginView> createState() => _LoginViewState();
 }
 
-class _RegisterViewState extends State<RegisterView> {
+class _LoginViewState extends State<LoginView> {
   final String logoSrc = 'assets/images/logo.png';
   final String appTitle = 'Covid Result\nChecker';
 
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
-  final TextEditingController _confirmPassword = TextEditingController();
 
   @override
   void initState() {
     _password.addListener(() => setState(() {}));
-    _confirmPassword.addListener(() => setState(() {}));
 
     super.initState();
   }
@@ -31,7 +30,6 @@ class _RegisterViewState extends State<RegisterView> {
   void dispose() {
     _email.dispose();
     _password.dispose();
-    _confirmPassword.dispose();
 
     super.dispose();
   }
@@ -53,7 +51,7 @@ class _RegisterViewState extends State<RegisterView> {
                     logoSrc,
                     height: 80,
                   ),
-                  const SizedBox(width: 10),
+                  SizedBox(width: 10),
                   Text(
                     appTitle,
                     textAlign: TextAlign.center,
@@ -96,7 +94,7 @@ class _RegisterViewState extends State<RegisterView> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Create new account',
+          'Welcome Back!',
           style: TextStyle(
             letterSpacing: 1,
             fontSize: 22,
@@ -114,7 +112,6 @@ class _RegisterViewState extends State<RegisterView> {
         const SizedBox(height: 5),
         AuthTextField(
           controller: _email,
-          hintText: 'name@organization.domain',
         ),
         const SizedBox(height: 10),
         const Text(
@@ -128,19 +125,6 @@ class _RegisterViewState extends State<RegisterView> {
         AuthTextField(
           controller: _password,
           isPassword: _password.text.isEmpty ? false : true,
-        ),
-        const SizedBox(height: 10),
-        const Text(
-          'Confirm password',
-          style: TextStyle(
-            color: Colors.grey,
-            letterSpacing: 1,
-          ),
-        ),
-        const SizedBox(height: 5),
-        AuthTextField(
-          controller: _confirmPassword,
-          isPassword: _confirmPassword.text.isEmpty ? false : true,
         ),
         const SizedBox(height: 20),
         Container(
@@ -172,28 +156,32 @@ class _RegisterViewState extends State<RegisterView> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              'Already have an account? ',
+              "Don't have an account yet? ",
               style: TextStyle(
                 color: Colors.grey,
                 letterSpacing: 1,
+                fontSize: 13,
               ),
             ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return const LoginView();
-                    },
+            Expanded(
+              child: TextButton(
+                onPressed: () {
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return const RegisterView();
+                      },
+                    ),
+                    (route) => false,
+                  );
+                },
+                child: const Text(
+                  'Register Here.',
+                  style: TextStyle(
+                    letterSpacing: 1,
+                    color: Colors.blue,
+                    fontSize: 13,
                   ),
-                  (route) => false,
-                );
-              },
-              child: const Text(
-                'Login Here.',
-                style: TextStyle(
-                  letterSpacing: 1,
-                  color: Colors.blue,
                 ),
               ),
             ),
