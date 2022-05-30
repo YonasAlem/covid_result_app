@@ -1,9 +1,11 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:covid_result_app/utils/colors.dart';
 import 'package:covid_result_app/views/login_view.dart';
 import 'package:covid_result_app/widgets/auth_views_widgets/auth_text_field.dart';
 import 'package:covid_result_app/widgets/scaffold_background.dart';
 import 'package:flutter/material.dart';
 
+import '../widgets/animated_text_widget.dart';
 import '../widgets/auth_views_widgets/logo_and_title.dart';
 import '../widgets/submit_button_big.dart';
 import '../widgets/submit_button_small.dart';
@@ -73,7 +75,10 @@ class _RegisterViewState extends State<RegisterView> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 10),
-        const TextWidgetBig(text: 'Create new account'),
+        const AnimatedTextWidget(
+          title1: 'Create new account',
+          title2: 'Keep your distance!',
+        ),
         const SizedBox(height: 5),
         const Divider(
           indent: 2,
@@ -92,15 +97,24 @@ class _RegisterViewState extends State<RegisterView> {
           isPassword: _password.text.isEmpty ? false : true,
         ),
         const TextWidgetSmall(text: 'Confirm password'),
-        AuthTextField(
-          controller: _confirmPassword,
-          isPassword: _confirmPassword.text.isEmpty ? false : true,
+        Hero(
+          tag: 'passTag',
+          child: Material(
+            color: Colors.transparent,
+            child: AuthTextField(
+              controller: _confirmPassword,
+              isPassword: _confirmPassword.text.isEmpty ? false : true,
+            ),
+          ),
         ),
         const SizedBox(height: 20),
-        SubmitButtonBig(
-          onTap: () {},
-          text: 'Register',
-          gradient: gradient1,
+        Hero(
+          tag: 'SubmitButtonBig',
+          child: SubmitButtonBig(
+            onTap: () {},
+            text: 'Register',
+            gradient: gradient1,
+          ),
         ),
         const SizedBox(height: 10),
         Row(

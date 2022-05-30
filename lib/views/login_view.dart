@@ -1,4 +1,6 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:covid_result_app/views/register_view.dart';
+import 'package:covid_result_app/widgets/animated_text_widget.dart';
 import 'package:covid_result_app/widgets/auth_views_widgets/logo_and_title.dart';
 import 'package:covid_result_app/widgets/scaffold_background.dart';
 import 'package:covid_result_app/widgets/submit_button_small.dart';
@@ -70,7 +72,10 @@ class _LoginViewState extends State<LoginView> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 10),
-        const TextWidgetBig(text: 'Welcome Back!'),
+        const AnimatedTextWidget(
+          title1: 'Welcome back!',
+          title2: 'Stay safe!',
+        ),
         const SizedBox(height: 5),
         const Divider(
           indent: 2,
@@ -84,15 +89,24 @@ class _LoginViewState extends State<LoginView> {
           controller: _email,
         ),
         const TextWidgetSmall(text: 'New password'),
-        AuthTextField(
-          controller: _password,
-          isPassword: _password.text.isEmpty ? false : true,
+        Hero(
+          tag: 'passTag',
+          child: Material(
+            color: Colors.transparent,
+            child: AuthTextField(
+              controller: _password,
+              isPassword: _password.text.isEmpty ? false : true,
+            ),
+          ),
         ),
         const SizedBox(height: 20),
-        SubmitButtonBig(
-          onTap: () {},
-          text: 'Login',
-          gradient: gradient1,
+        Hero(
+          tag: 'SubmitButtonBig',
+          child: SubmitButtonBig(
+            onTap: () {},
+            text: 'Login',
+            gradient: gradient1,
+          ),
         ),
         const SizedBox(height: 10),
         Row(
