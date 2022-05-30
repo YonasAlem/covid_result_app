@@ -85,8 +85,9 @@ class _LoginViewState extends State<LoginView> {
         const SizedBox(height: 5),
         AuthTextField(
           controller: _email,
+          hintText: 'enter company\'s email',
         ),
-        const TextWidgetSmall(text: 'New password'),
+        const TextWidgetSmall(text: 'Password'),
         Hero(
           tag: 'passTag',
           child: Material(
@@ -94,6 +95,7 @@ class _LoginViewState extends State<LoginView> {
             child: AuthTextField(
               controller: _password,
               isPassword: _password.text.isEmpty ? false : true,
+              hintText: 'enter your password',
             ),
           ),
         ),

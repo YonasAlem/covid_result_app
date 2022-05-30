@@ -93,6 +93,7 @@ class _RegisterViewState extends State<RegisterView> {
         AuthTextField(
           controller: _password,
           isPassword: _password.text.isEmpty ? false : true,
+          hintText: 'enter your password',
         ),
         const TextWidgetSmall(text: 'Confirm password'),
         Hero(
@@ -102,6 +103,7 @@ class _RegisterViewState extends State<RegisterView> {
             child: AuthTextField(
               controller: _confirmPassword,
               isPassword: _confirmPassword.text.isEmpty ? false : true,
+              hintText: 'repeat your password',
             ),
           ),
         ),
