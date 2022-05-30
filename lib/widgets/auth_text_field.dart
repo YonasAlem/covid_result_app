@@ -32,6 +32,8 @@ class _AuthTextFieldState extends State<AuthTextField> {
       decoration: InputDecoration(
         contentPadding: const EdgeInsets.all(10),
         isDense: true,
+        fillColor: Colors.white,
+        filled: true,
         hintText: widget.hintText,
         hintStyle: TextStyle(
           letterSpacing: 1,
@@ -41,7 +43,7 @@ class _AuthTextFieldState extends State<AuthTextField> {
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
           borderSide: BorderSide(
-            color: Colors.grey.withOpacity(0.2),
+            color: Colors.grey.withOpacity(0),
           ),
         ),
         focusedBorder: OutlineInputBorder(
