@@ -11,6 +11,8 @@ import '../widgets/auth_views_widgets/auth_text_field.dart';
 import '../widgets/submit_button_big.dart';
 
 class LoginView extends StatefulWidget {
+  static const String routeName = '/loginview/';
+
   const LoginView({Key? key}) : super(key: key);
 
   @override
@@ -101,16 +103,10 @@ class _LoginViewState extends State<LoginView> {
               havePadding: false,
             ),
             SubmitButtonSmall(
-              onTap: () {
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return const RegisterView();
-                    },
-                  ),
-                  (route) => false,
-                );
-              },
+              onTap: () => Navigator.of(context).pushNamedAndRemoveUntil(
+                RegisterView.routeName,
+                (route) => false,
+              ),
               context: context,
               text: 'Register.',
             )

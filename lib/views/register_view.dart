@@ -11,6 +11,8 @@ import '../widgets/text_widget_big.dart';
 import '../widgets/text_widget_small.dart';
 
 class RegisterView extends StatefulWidget {
+  static const String routeName = '/registerview/';
+
   const RegisterView({Key? key}) : super(key: key);
 
   @override
@@ -18,9 +20,6 @@ class RegisterView extends StatefulWidget {
 }
 
 class _RegisterViewState extends State<RegisterView> {
-  final String logoSrc = 'assets/images/logo.png';
-  final String appTitle = 'Covid Result\nChecker';
-
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
   final TextEditingController _confirmPassword = TextEditingController();
@@ -112,16 +111,10 @@ class _RegisterViewState extends State<RegisterView> {
               havePadding: false,
             ),
             SubmitButtonSmall(
-              onTap: () {
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return const LoginView();
-                    },
-                  ),
-                  (route) => false,
-                );
-              },
+              onTap: () => Navigator.of(context).pushNamedAndRemoveUntil(
+                LoginView.routeName,
+                (route) => false,
+              ),
               text: 'Login.',
               context: context,
             ),
