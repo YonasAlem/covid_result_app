@@ -61,7 +61,7 @@ class _RegisterViewState extends State<RegisterView> {
                   boxShadow: const [
                     BoxShadow(
                       color: Colors.black26,
-                      blurRadius: 15,
+                      blurRadius: 10,
                       spreadRadius: 1,
                       offset: Offset(0, 10),
                     ),
@@ -110,10 +110,14 @@ class _RegisterViewState extends State<RegisterView> {
           text: 'Register',
           gradient: gradient1,
         ),
+        const SizedBox(height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const TextWidgetSmall(text: 'Already have an account? '),
+            const TextWidgetSmall(
+              text: 'Already have an account? ',
+              havePadding: false,
+            ),
             SubmitButtonSmall(
               onTap: () {
                 Navigator.of(context).pushAndRemoveUntil(
@@ -125,7 +129,7 @@ class _RegisterViewState extends State<RegisterView> {
                   (route) => false,
                 );
               },
-              text: 'Login Here.',
+              text: 'Login.',
               context: context,
             ),
           ],
