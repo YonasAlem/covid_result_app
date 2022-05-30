@@ -7,11 +7,15 @@ class AuthTextField extends StatefulWidget {
     required this.controller,
     this.isPassword = false,
     this.hintText,
+    this.error,
+    this.validator,
   }) : super(key: key);
 
   final TextEditingController controller;
   final bool isPassword;
   final String? hintText;
+  final String? error;
+  final String? Function(String?)? validator;
 
   @override
   State<AuthTextField> createState() => _AuthTextFieldState();
@@ -30,12 +34,14 @@ class _AuthTextFieldState extends State<AuthTextField> {
         color: Colors.grey.shade700,
         letterSpacing: 1,
       ),
+      validator: widget.validator,
       decoration: InputDecoration(
         contentPadding: const EdgeInsets.all(10),
         isDense: true,
         fillColor: Colors.white,
         filled: true,
         hintText: widget.hintText,
+        errorText: widget.error,
         hintStyle: TextStyle(
           letterSpacing: 1,
           color: Colors.grey[300],
@@ -65,4 +71,6 @@ class _AuthTextFieldState extends State<AuthTextField> {
       ),
     );
   }
+
+  String? newMethod(message) {}
 }

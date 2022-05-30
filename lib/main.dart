@@ -1,7 +1,7 @@
+import 'package:covid_result_app/services/auth_services/auth_services.dart';
+import 'package:covid_result_app/services/auth_services/auth_user.dart';
 import 'package:covid_result_app/views/home_view.dart';
 import 'package:covid_result_app/views/verify_view.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -46,6 +46,20 @@ class MyApp extends StatelessWidget {
               curve: Curves.easeOut,
               settings: settings,
             );
+          case VerifyView.routeName:
+            return PageTransition(
+              child: const VerifyView(),
+              type: PageTransitionType.rightToLeft,
+              curve: Curves.easeIn,
+              settings: settings,
+            );
+          case HomeView.routeName:
+            return PageTransition(
+              child: const HomeView(),
+              type: PageTransitionType.rightToLeft,
+              curve: Curves.easeIn,
+              settings: settings,
+            );
         }
       },
     );
@@ -58,17 +72,16 @@ class FirstScreenHandler extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: Firebase.initializeApp(),
+      future: AuthServices.firebase().initialize(),
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.done:
-            final User? user = FirebaseAuth.instance.currentUser;
-
+            final AuthUser? user = AuthServices.firebase().currentUser;
             if (user != null) {
-              if (user.emailVerified) {
+              if (user.isEmailVerified) {
                 return const HomeView();
               } else {
-                return const VerifyView();
+                return const RegisterView();
               }
             } else {
               return const LoginView();
