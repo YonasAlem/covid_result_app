@@ -54,7 +54,7 @@ class MyApp extends StatelessWidget {
           case HomeView.routeName:
             return PageTransition(
               child: const HomeView(),
-              type: PageTransitionType.rightToLeft,
+              type: PageTransitionType.leftToRight,
               curve: Curves.easeIn,
               settings: settings,
             );
@@ -79,7 +79,7 @@ class FirstScreenHandler extends StatelessWidget {
               if (user.isEmailVerified) {
                 return const HomeView();
               } else {
-                return const RegisterView();
+                return const VerifyView();
               }
             } else {
               return const LoginView();

@@ -60,7 +60,6 @@ class _LoginViewState extends State<LoginView> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   color: Colors.white.withOpacity(0.95),
-                  // big container shadow
                   boxShadow: const [boxShadow1],
                 ),
                 child: _formField(),
@@ -136,29 +135,21 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 
-  _loginCompany() async {
-    // hide keyboard
+  Future<void> _loginCompany() async {
     FocusManager.instance.primaryFocus?.unfocus();
-
     passwordError = null;
     emailError = null;
 
     final String email = _email.text.trim().toLowerCase();
-    final String password = _password.text.trim().toLowerCase();
+    final String password = _password.text.trim();
 
     if (email.isEmpty || password.isEmpty) {
-      if (email.isEmpty) {
-        setEmailErrorMessage('Email can not be empty.');
-      }
-      if (password.isEmpty) {
-        setPasswordErrorMessage('Password can not be empty.');
-      }
+      if (email.isEmpty) setEmailErrorMessage('Email can not be empty.');
+      if (password.isEmpty) setPasswordErrorMessage('Password can not be empty.');
     } else {
       try {
         await AuthServices.firebase().login(email: email, password: password);
-
         final currentUser = AuthServices.firebase().currentUser;
-
         if (currentUser?.isEmailVerified ?? false) {
           if (mounted) {
             Navigator.of(context).pushNamedAndRemoveUntil(
@@ -180,6 +171,5 @@ class _LoginViewState extends State<LoginView> {
   }
 
   void setPasswordErrorMessage(String message) => setState(() => passwordError = message);
-
   void setEmailErrorMessage(String message) => setState(() => emailError = message);
 }

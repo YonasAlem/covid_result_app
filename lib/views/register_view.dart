@@ -62,7 +62,6 @@ class _RegisterViewState extends State<RegisterView> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   color: Colors.white.withOpacity(0.95),
-                  // big container shadow
                   boxShadow: const [boxShadow1],
                 ),
                 child: _formField(),
@@ -145,20 +144,17 @@ class _RegisterViewState extends State<RegisterView> {
   }
 
   Future<void> _registerCompany() async {
-    // hide keyboard
     FocusManager.instance.primaryFocus?.unfocus();
-
     passwordError = null;
     emailError = null;
 
     final String email = _email.text.trim().toLowerCase();
-    final String password = _password.text.trim().toLowerCase();
-    final String confirm = _confirmPassword.text.trim().toLowerCase();
+    final String password = _password.text.trim();
+    final String confirm = _confirmPassword.text.trim();
 
     if (email.isEmpty || confirm.isEmpty || password.length != confirm.length) {
-      if (email.isEmpty) {
-        setEmailErrorMessage('Email can not be empty.');
-      }
+      if (email.isEmpty) setEmailErrorMessage('Email can not be empty.');
+
       if (confirm.isEmpty || password.isEmpty) {
         setPasswordErrorMessage('Password can not be empty.');
       } else if (password.length != confirm.length) {
@@ -166,11 +162,8 @@ class _RegisterViewState extends State<RegisterView> {
       }
     } else {
       try {
-        // register new user
         await AuthServices.firebase().register(email: email, password: password);
-        // send email verification to the user
         await AuthServices.firebase().sendEmailVerification();
-        // goto the verification waiting screen
         if (mounted) Navigator.of(context).pushNamed(VerifyView.routeName);
       } on EmailAlreadyInUseAuthException {
         setEmailErrorMessage('The email is taken. Try another.');
@@ -185,6 +178,5 @@ class _RegisterViewState extends State<RegisterView> {
   }
 
   void setPasswordErrorMessage(String message) => setState(() => passwordError = message);
-
   void setEmailErrorMessage(String message) => setState(() => emailError = message);
 }
