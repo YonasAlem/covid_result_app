@@ -6,9 +6,13 @@ import 'package:covid_result_app/widgets/submit_button_small.dart';
 import 'package:covid_result_app/widgets/text_widget_small.dart';
 import 'package:flutter/material.dart';
 
+import '../services/auth_services/auth_exceptions.dart';
+import '../services/auth_services/auth_services.dart';
 import '../utils/colors.dart';
 import '../widgets/auth_views_widgets/auth_text_field.dart';
 import '../widgets/submit_button_big.dart';
+import 'home_view.dart';
+import 'verify_view.dart';
 
 class LoginView extends StatefulWidget {
   static const String routeName = '/loginview/';
@@ -22,6 +26,9 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
+
+  String? emailError;
+  String? passwordError;
 
   @override
   void initState() {
@@ -86,6 +93,7 @@ class _LoginViewState extends State<LoginView> {
         AuthTextField(
           controller: _email,
           hintText: 'enter company\'s email',
+          error: emailError,
         ),
         const TextWidgetSmall(text: 'Password'),
         Hero(
@@ -96,6 +104,7 @@ class _LoginViewState extends State<LoginView> {
               controller: _password,
               isPassword: _password.text.isEmpty ? false : true,
               hintText: 'enter your password',
+              error: passwordError,
             ),
           ),
         ),
@@ -103,7 +112,7 @@ class _LoginViewState extends State<LoginView> {
         Hero(
           tag: 'SubmitButtonBig',
           child: SubmitButtonBig(
-            onTap: () {},
+            onTap: _loginCompany,
             text: 'Login',
             gradient: gradient1,
           ),
@@ -117,10 +126,7 @@ class _LoginViewState extends State<LoginView> {
               havePadding: false,
             ),
             SubmitButtonSmall(
-              onTap: () => Navigator.of(context).pushNamedAndRemoveUntil(
-                RegisterView.routeName,
-                (route) => false,
-              ),
+              onTap: () => Navigator.of(context).pushReplacementNamed(RegisterView.routeName),
               context: context,
               text: 'Register.',
             )
@@ -129,4 +135,51 @@ class _LoginViewState extends State<LoginView> {
       ],
     );
   }
+
+  _loginCompany() async {
+    // hide keyboard
+    FocusManager.instance.primaryFocus?.unfocus();
+
+    passwordError = null;
+    emailError = null;
+
+    final String email = _email.text.trim().toLowerCase();
+    final String password = _password.text.trim().toLowerCase();
+
+    if (email.isEmpty || password.isEmpty) {
+      if (email.isEmpty) {
+        setEmailErrorMessage('Email can not be empty.');
+      }
+      if (password.isEmpty) {
+        setPasswordErrorMessage('Password can not be empty.');
+      }
+    } else {
+      try {
+        await AuthServices.firebase().login(email: email, password: password);
+
+        final currentUser = AuthServices.firebase().currentUser;
+
+        if (currentUser?.isEmailVerified ?? false) {
+          if (mounted) {
+            Navigator.of(context).pushNamedAndRemoveUntil(
+              HomeView.routeName,
+              (route) => false,
+            );
+          }
+        } else {
+          if (mounted) Navigator.of(context).pushNamed(VerifyView.routeName);
+        }
+      } on UserNotFoundAuthException {
+        setEmailErrorMessage("Couldn't find your account.");
+      } on WrongPasswordAuthException {
+        setPasswordErrorMessage('Wrong password, Please try again!');
+      } on GenericAuthException {
+        setPasswordErrorMessage('There is a problem, please try again!');
+      }
+    }
+  }
+
+  void setPasswordErrorMessage(String message) => setState(() => passwordError = message);
+
+  void setEmailErrorMessage(String message) => setState(() => emailError = message);
 }

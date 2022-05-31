@@ -134,10 +134,7 @@ class _RegisterViewState extends State<RegisterView> {
               havePadding: false,
             ),
             SubmitButtonSmall(
-              onTap: () => Navigator.of(context).pushNamedAndRemoveUntil(
-                LoginView.routeName,
-                (route) => false,
-              ),
+              onTap: () => Navigator.of(context).pushReplacementNamed(LoginView.routeName),
               text: 'Login.',
               context: context,
             ),
