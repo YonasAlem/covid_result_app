@@ -89,7 +89,7 @@ class FirstScreenHandler extends StatelessWidget {
               body: Column(
                 children: const [
                   SizedBox(height: 70),
-                  LogoAndTitle(),
+                  LogoAndTitle(haveAnimation: false),
                   SizedBox(height: 20),
                   CircularProgressIndicator(),
                 ],

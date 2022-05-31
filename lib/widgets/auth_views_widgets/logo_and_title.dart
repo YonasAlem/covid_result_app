@@ -3,7 +3,9 @@ import 'package:covid_result_app/utils/colors.dart';
 import 'package:flutter/material.dart';
 
 class LogoAndTitle extends StatelessWidget {
-  const LogoAndTitle({Key? key}) : super(key: key);
+  const LogoAndTitle({Key? key, this.haveAnimation = true}) : super(key: key);
+
+  final bool haveAnimation;
 
   @override
   Widget build(BuildContext context) {
@@ -17,25 +19,36 @@ class LogoAndTitle extends StatelessWidget {
             height: 80,
           ),
           const SizedBox(width: 10),
-          AnimatedTextKit(
-            animatedTexts: [
-              ColorizeAnimatedText(
-                'Covid Result\nChecker',
-                textStyle: const TextStyle(
-                  fontFamily: 'Black',
-                  fontSize: 26,
-                  letterSpacing: 1,
+          haveAnimation
+              ? AnimatedTextKit(
+                  animatedTexts: [
+                    ColorizeAnimatedText(
+                      'Covid Result\nChecker',
+                      textStyle: const TextStyle(
+                        fontFamily: 'Black',
+                        fontSize: 26,
+                        letterSpacing: 1,
+                      ),
+                      colors: [
+                        Colors.grey[700]!,
+                        mainColor,
+                        secondaryColor,
+                      ],
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                  isRepeatingAnimation: false,
+                )
+              : Text(
+                  'Covid Result\nChecker',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'Black',
+                    fontSize: 26,
+                    letterSpacing: 1,
+                    color: Colors.grey[700],
+                  ),
                 ),
-                colors: [
-                  Colors.grey[700]!,
-                  mainColor,
-                  secondaryColor,
-                ],
-                textAlign: TextAlign.center,
-              ),
-            ],
-            isRepeatingAnimation: false,
-          ),
         ],
       ),
     );
