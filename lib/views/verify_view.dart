@@ -12,7 +12,7 @@ class VerifyView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Verify view'),
-        systemOverlayStyle: SystemUiOverlayStyle(
+        systemOverlayStyle: const SystemUiOverlayStyle(
           statusBarColor: mainColor,
         ),
       ),

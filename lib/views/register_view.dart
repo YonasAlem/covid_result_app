@@ -30,8 +30,6 @@ class _RegisterViewState extends State<RegisterView> {
   String? emailError;
   String? passwordError;
 
-  final formKey = GlobalKey<FormState>();
-
   @override
   void initState() {
     _password.addListener(() => setState(() {}));
@@ -63,7 +61,7 @@ class _RegisterViewState extends State<RegisterView> {
                 padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withOpacity(0.95),
                   // big container shadow
                   boxShadow: const [boxShadow1],
                 ),
@@ -76,126 +74,120 @@ class _RegisterViewState extends State<RegisterView> {
     );
   }
 
-  Form _formField() {
-    return Form(
-      key: formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 10),
-          const AnimatedTextWidget(
-            title1: 'Create new account',
-            title2: 'Keep your distance!',
-          ),
-          const SizedBox(height: 5),
-          const Divider(
-            indent: 2,
-            endIndent: 260,
-            thickness: 3,
-            color: mainColor,
-          ),
-          const TextWidgetSmall(text: 'Email address'),
-          AuthTextField(
-            controller: _email,
-            hintText: 'name@organization.domain',
-            error: emailError,
-            validator: (message) {
-              if (_email.text.isEmpty) {
-                return 'Email can not be empty.';
-              } else if (emailError != null) {
-                return emailError;
-              } else {
-                return null;
-              }
-            },
-          ),
-          const TextWidgetSmall(text: 'New password'),
-          AuthTextField(
-            controller: _password,
-            isPassword: _password.text.isEmpty ? false : true,
-            hintText: 'enter your password',
-            error: passwordError != null ? '' : null,
-          ),
-          const TextWidgetSmall(text: 'Confirm password'),
-          Hero(
-            tag: 'passTag',
-            child: Material(
-              color: Colors.transparent,
-              child: AuthTextField(
-                controller: _confirmPassword,
-                isPassword: _confirmPassword.text.isEmpty ? false : true,
-                hintText: 'repeat your password',
-                error: passwordError,
-                validator: (message) {
-                  if (_confirmPassword.text.isEmpty) {
-                    return 'Password can not be empty.';
-                  } else if (_password.text.length != _confirmPassword.text.length) {
-                    return "Those password didn't match. Try again.";
-                  } else {
-                    return null;
-                  }
-                },
-              ),
+  Column _formField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 10),
+        const AnimatedTextWidget(
+          title1: 'Create new account',
+          title2: 'Keep your distance!',
+        ),
+        const SizedBox(height: 5),
+        const Divider(
+          indent: 2,
+          endIndent: 260,
+          thickness: 3,
+          color: secondaryColor,
+        ),
+        const TextWidgetSmall(text: 'Email address'),
+        AuthTextField(
+          controller: _email,
+          hintText: 'name@organization.domain',
+          error: emailError,
+        ),
+        const TextWidgetSmall(text: 'New password'),
+        AuthTextField(
+          controller: _password,
+          isPassword: _password.text.isEmpty ? false : true,
+          hintText: 'enter your password',
+          borderColor: passwordError != null ? Colors.red.withOpacity(0.5) : null,
+        ),
+        const TextWidgetSmall(text: 'Confirm password'),
+        Hero(
+          tag: 'passTag',
+          child: Material(
+            color: Colors.transparent,
+            child: AuthTextField(
+              controller: _confirmPassword,
+              isPassword: _confirmPassword.text.isEmpty ? false : true,
+              hintText: 'repeat your password',
+              error: passwordError,
             ),
           ),
-          const SizedBox(height: 20),
-          Hero(
-            tag: 'SubmitButtonBig',
-            child: SubmitButtonBig(
-              onTap: _registerCompany,
-              text: 'Register',
-              gradient: gradient1,
+        ),
+        const SizedBox(height: 20),
+        Hero(
+          tag: 'SubmitButtonBig',
+          child: SubmitButtonBig(
+            onTap: _registerCompany,
+            text: 'Register',
+            gradient: gradient1,
+          ),
+        ),
+        const SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const TextWidgetSmall(
+              text: 'Already have an account? ',
+              havePadding: false,
             ),
-          ),
-          const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const TextWidgetSmall(
-                text: 'Already have an account? ',
-                havePadding: false,
+            SubmitButtonSmall(
+              onTap: () => Navigator.of(context).pushNamedAndRemoveUntil(
+                LoginView.routeName,
+                (route) => false,
               ),
-              SubmitButtonSmall(
-                onTap: () => Navigator.of(context).pushNamedAndRemoveUntil(
-                  LoginView.routeName,
-                  (route) => false,
-                ),
-                text: 'Login.',
-                context: context,
-              ),
-            ],
-          ),
-        ],
-      ),
+              text: 'Login.',
+              context: context,
+            ),
+          ],
+        ),
+      ],
     );
   }
 
-  _registerCompany() async {
+  Future<void> _registerCompany() async {
+    // hide keyboard
     FocusManager.instance.primaryFocus?.unfocus();
 
     passwordError = null;
     emailError = null;
 
-    var val = formKey.currentState!.validate();
+    final String email = _email.text.trim().toLowerCase();
+    final String password = _password.text.trim().toLowerCase();
+    final String confirm = _confirmPassword.text.trim().toLowerCase();
 
-    if (val) {
+    if (email.isEmpty || confirm.isEmpty || password.length != confirm.length) {
+      if (email.isEmpty) {
+        setEmailErrorMessage('Email can not be empty.');
+      }
+      if (confirm.isEmpty || password.isEmpty) {
+        setPasswordErrorMessage('Password can not be empty.');
+      } else if (password.length != confirm.length) {
+        setPasswordErrorMessage("Those password didn't match. Try again.");
+      }
+    } else {
       try {
-        final String email = _email.text.trim().toLowerCase();
-        final String password = _password.text.trim().toLowerCase();
-
+        // register new user
         await AuthServices.firebase().register(email: email, password: password);
+        // send email verification to the user
         await AuthServices.firebase().sendEmailVerification();
-
+        // goto the verification waiting screen
         if (mounted) Navigator.of(context).pushNamed(VerifyView.routeName);
-      } on WeakPasswordAuthException {
-        setState(() => passwordError = 'Weak password');
       } on EmailAlreadyInUseAuthException {
-        setState(() => emailError = 'The email is taken. Try another.');
+        setEmailErrorMessage('The email is taken. Try another.');
+      } on WeakPasswordAuthException {
+        setPasswordErrorMessage('Use 6 characters or more for your password.');
       } on InvalidEmailAuthException {
-        setState(() => emailError = 'The email is invalid. Try another');
+        setEmailErrorMessage('The email is invalid. Try another');
       } on GenericAuthException {
-        setState(() => passwordError = 'Something happend, Please try again!');
+        setPasswordErrorMessage('Something happend, Please try again!');
       }
     }
   }
+
+  void setPasswordErrorMessage(String message) => setState(() => passwordError = message);
+
+  void setEmailErrorMessage(String message) => setState(() => emailError = message);
 }

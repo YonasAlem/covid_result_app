@@ -34,7 +34,6 @@ class MyApp extends StatelessWidget {
             return PageTransition(
               child: const RegisterView(),
               type: PageTransitionType.fade,
-              duration: const Duration(milliseconds: 500),
               curve: Curves.easeIn,
               settings: settings,
             );
@@ -42,7 +41,6 @@ class MyApp extends StatelessWidget {
             return PageTransition(
               child: const LoginView(),
               type: PageTransitionType.fade,
-              duration: const Duration(milliseconds: 500),
               curve: Curves.easeOut,
               settings: settings,
             );

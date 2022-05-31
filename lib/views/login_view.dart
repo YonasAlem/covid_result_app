@@ -52,7 +52,7 @@ class _LoginViewState extends State<LoginView> {
                 padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withOpacity(0.95),
                   // big container shadow
                   boxShadow: const [boxShadow1],
                 ),
@@ -79,7 +79,7 @@ class _LoginViewState extends State<LoginView> {
           indent: 2,
           endIndent: 260,
           thickness: 3,
-          color: mainColor,
+          color: secondaryColor,
         ),
         const TextWidgetSmall(text: 'Email address'),
         const SizedBox(height: 5),

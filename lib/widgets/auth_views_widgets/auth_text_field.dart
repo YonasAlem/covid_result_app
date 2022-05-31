@@ -8,14 +8,14 @@ class AuthTextField extends StatefulWidget {
     this.isPassword = false,
     this.hintText,
     this.error,
-    this.validator,
+    this.borderColor,
   }) : super(key: key);
 
   final TextEditingController controller;
   final bool isPassword;
   final String? hintText;
   final String? error;
-  final String? Function(String?)? validator;
+  final Color? borderColor;
 
   @override
   State<AuthTextField> createState() => _AuthTextFieldState();
@@ -34,7 +34,6 @@ class _AuthTextFieldState extends State<AuthTextField> {
         color: Colors.grey.shade700,
         letterSpacing: 1,
       ),
-      validator: widget.validator,
       decoration: InputDecoration(
         contentPadding: const EdgeInsets.all(10),
         isDense: true,
@@ -47,16 +46,28 @@ class _AuthTextFieldState extends State<AuthTextField> {
           color: Colors.grey[300],
           fontSize: 14,
         ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide(
+            color: Colors.red.withOpacity(0.5),
+          ),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide(
+            color: Colors.red.withOpacity(0.5),
+          ),
+        ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
           borderSide: BorderSide(
-            color: Colors.grey.withOpacity(0),
+            color: widget.borderColor ?? Colors.grey.shade200,
           ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
           borderSide: BorderSide(
-            color: mainColor.withOpacity(0.3),
+            color: widget.borderColor ?? mainColor.withOpacity(0.3),
           ),
         ),
         suffixIcon: widget.isPassword
@@ -71,6 +82,4 @@ class _AuthTextFieldState extends State<AuthTextField> {
       ),
     );
   }
-
-  String? newMethod(message) {}
 }

@@ -19,7 +19,7 @@ class TextWidgetSmall extends StatelessWidget {
       child: Text(
         text,
         style: TextStyle(
-          color: Colors.grey,
+          color: Colors.grey.shade600,
           letterSpacing: 1,
           fontSize: fontSize,
         ),
