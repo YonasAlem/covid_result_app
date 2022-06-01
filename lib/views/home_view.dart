@@ -12,7 +12,10 @@ class HomeView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home view'),
-        systemOverlayStyle: const SystemUiOverlayStyle(statusBarColor: mainColor),
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          statusBarColor: mainColor,
+          statusBarIconBrightness: Brightness.light,
+        ),
       ),
     );
   }

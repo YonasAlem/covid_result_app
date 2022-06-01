@@ -47,76 +47,90 @@ class _VerifyViewState extends State<VerifyView> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: isVerified ? const SizedBox() : const BackButton(color: Colors.black),
+        leading: isVerified
+            ? const SizedBox()
+            : BackButton(
+                onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil(
+                  LoginView.routeName,
+                  (route) => false,
+                ),
+                color: Colors.black,
+              ),
         systemOverlayStyle: const SystemUiOverlayStyle(
           statusBarIconBrightness: Brightness.dark,
           statusBarColor: Colors.white,
         ),
       ),
-      body: Column(
-        children: [
-          const SizedBox(height: 50),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
-            child: SvgPicture.asset(
-              'assets/images/verify.svg',
-              height: 200,
-              width: 100,
-              color: isVerified ? Colors.green : mainColor,
-            ),
-          ),
-          AnimatedTextWidget(
-            title1: isVerified ? 'Verification Success!' : 'Waiting for verification.',
-          ),
-          const SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Text(
-              isVerified
-                  ? 'the email verification was success. click the below button to go to the homepage.'
-                  : 'We sent you an email verification link to \n$_email.\nPlease open the link and verify your email address.',
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.grey),
-            ),
-          ),
-          const SizedBox(height: 40),
-          if (isVerified == false)
-            const Text(
-              'If you did not received an email click below.',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.grey,
+      body: Center(
+        child: Column(
+          children: [
+            const SizedBox(height: 50),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
+              child: SvgPicture.asset(
+                'assets/images/verify.svg',
+                height: 200,
+                width: 100,
+                color: isVerified ? Colors.green : mainColor,
               ),
             ),
-          if (isVerified == false)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextButton(
-                  onPressed: () async {
-                    await AuthServices.firebase().sendEmailVerification();
-                  },
-                  child: const Text('Send email again.'),
-                ),
-                const Text('  OR  '),
-                TextButton(
-                  onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil(
-                    LoginView.routeName,
-                    (route) => false,
-                  ),
-                  child: const Text('Logout.'),
-                ),
-              ],
+            AnimatedTextWidget(
+              title1: isVerified ? 'Verification Success!' : 'Waiting for verification.',
             ),
-          if (isVerified)
-            TextButton(
-              onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil(
-                HomeView.routeName,
-                (route) => false,
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                isVerified
+                    ? 'the email verification was success. click the below button to go to the homepage.'
+                    : 'We sent you an email verification link.\nPlease open the link and verify your email address.',
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Colors.grey),
               ),
-              child: const Text('Goto HomePage >>>'),
             ),
-        ],
+            const SizedBox(height: 40),
+            if (isVerified == false)
+              const Text(
+                'If you did not received an email click below.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.grey,
+                ),
+              ),
+            if (isVerified == false)
+              TextButton(
+                onPressed: () async {
+                  await AuthServices.firebase().sendEmailVerification();
+                },
+                child: const Text('Send email again.'),
+              ),
+            const SizedBox(height: 20),
+            if (isVerified == false)
+              Text(
+                'If ( $_email ) is not your email \naddress please',
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Colors.grey,
+                ),
+              ),
+            if (isVerified == false)
+              TextButton(
+                onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil(
+                  LoginView.routeName,
+                  (route) => false,
+                ),
+                child: const Text('Logout.'),
+              ),
+            if (isVerified)
+              TextButton(
+                onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil(
+                  HomeView.routeName,
+                  (route) => false,
+                ),
+                child: const Text('Goto HomePage >>>'),
+              ),
+          ],
+        ),
       ),
     );
   }
