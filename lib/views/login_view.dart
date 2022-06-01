@@ -130,7 +130,7 @@ class _LoginViewState extends State<LoginView> {
         Hero(
           tag: 'SubmitButtonBig',
           child: SubmitButtonBig(
-            onTap: _loginCompany,
+            onTap: isLoading ? null : _loginCompany,
             text: 'Login',
             gradient: gradient1,
           ),
@@ -144,7 +144,9 @@ class _LoginViewState extends State<LoginView> {
               havePadding: false,
             ),
             SubmitButtonSmall(
-              onTap: () => Navigator.of(context).pushReplacementNamed(RegisterView.routeName),
+              onTap: isLoading
+                  ? null
+                  : () => Navigator.of(context).pushReplacementNamed(RegisterView.routeName),
               context: context,
               text: 'Register.',
             )
