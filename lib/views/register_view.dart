@@ -3,11 +3,13 @@ import 'package:covid_result_app/views/login_view.dart';
 import 'package:covid_result_app/widgets/auth_views_widgets/auth_text_field.dart';
 import 'package:covid_result_app/widgets/scaffold_background.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../services/auth_services/auth_exceptions.dart';
 import '../services/auth_services/auth_services.dart';
 import '../widgets/animated_text_widget.dart';
 import '../widgets/auth_views_widgets/logo_and_title.dart';
+import '../widgets/loading_widget.dart';
 import '../widgets/submit_button_big.dart';
 import '../widgets/submit_button_small.dart';
 import '../widgets/text_widget_small.dart';
@@ -29,6 +31,8 @@ class _RegisterViewState extends State<RegisterView> {
 
   String? emailError;
   String? passwordError;
+
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -52,6 +56,14 @@ class _RegisterViewState extends State<RegisterView> {
     return ScaffoldBackground(
       scaffold: Scaffold(
         backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          toolbarHeight: 0,
+          elevation: 0,
+          systemOverlayStyle: const SystemUiOverlayStyle(
+            statusBarIconBrightness: Brightness.dark,
+            statusBarColor: Colors.white,
+          ),
+        ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
@@ -66,6 +78,12 @@ class _RegisterViewState extends State<RegisterView> {
                 ),
                 child: _formField(),
               ),
+              if (isLoading) const SizedBox(height: 20),
+              if (isLoading)
+                const LoadingWidget(
+                  width: 100,
+                  text: 'Registering',
+                ),
             ],
           ),
         ),
@@ -145,8 +163,10 @@ class _RegisterViewState extends State<RegisterView> {
 
   Future<void> _registerCompany() async {
     FocusManager.instance.primaryFocus?.unfocus();
-    passwordError = null;
-    emailError = null;
+    setState(() {
+      passwordError = null;
+      emailError = null;
+    });
 
     final String email = _email.text.trim().toLowerCase();
     final String password = _password.text.trim();
@@ -162,16 +182,24 @@ class _RegisterViewState extends State<RegisterView> {
       }
     } else {
       try {
+        setState(() => isLoading = true);
         await AuthServices.firebase().register(email: email, password: password);
         await AuthServices.firebase().sendEmailVerification();
-        if (mounted) Navigator.of(context).pushNamed(VerifyView.routeName);
+        if (mounted) {
+          turnOffLoadingWidget();
+          Navigator.of(context).pushNamed(VerifyView.routeName, arguments: email);
+        }
       } on EmailAlreadyInUseAuthException {
+        turnOffLoadingWidget();
         setEmailErrorMessage('The email is taken. Try another.');
       } on WeakPasswordAuthException {
+        turnOffLoadingWidget();
         setPasswordErrorMessage('Use 6 characters or more for your password.');
       } on InvalidEmailAuthException {
+        turnOffLoadingWidget();
         setEmailErrorMessage('The email is invalid. Try another');
       } on GenericAuthException {
+        turnOffLoadingWidget();
         setPasswordErrorMessage('Something happend, Please try again!');
       }
     }
@@ -179,4 +207,5 @@ class _RegisterViewState extends State<RegisterView> {
 
   void setPasswordErrorMessage(String message) => setState(() => passwordError = message);
   void setEmailErrorMessage(String message) => setState(() => emailError = message);
+  void turnOffLoadingWidget() => setState(() => isLoading = false);
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-const LinearGradient gradient1 = LinearGradient(
-  colors: [Colors.blue, Colors.cyan],
+LinearGradient gradient1 = LinearGradient(
+  colors: [Colors.blue[800]!, Colors.blue, Colors.cyan],
   begin: Alignment.bottomLeft,
   end: Alignment.topRight,
 );

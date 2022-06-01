@@ -5,11 +5,14 @@ import 'package:covid_result_app/widgets/scaffold_background.dart';
 import 'package:covid_result_app/widgets/submit_button_small.dart';
 import 'package:covid_result_app/widgets/text_widget_small.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import '../services/auth_services/auth_exceptions.dart';
 import '../services/auth_services/auth_services.dart';
 import '../utils/colors.dart';
 import '../widgets/auth_views_widgets/auth_text_field.dart';
+import '../widgets/loading_widget.dart';
 import '../widgets/submit_button_big.dart';
 import 'home_view.dart';
 import 'verify_view.dart';
@@ -29,6 +32,8 @@ class _LoginViewState extends State<LoginView> {
 
   String? emailError;
   String? passwordError;
+
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -50,6 +55,14 @@ class _LoginViewState extends State<LoginView> {
     return ScaffoldBackground(
       scaffold: Scaffold(
         backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          toolbarHeight: 0,
+          elevation: 0,
+          systemOverlayStyle: const SystemUiOverlayStyle(
+            statusBarIconBrightness: Brightness.dark,
+            statusBarColor: Colors.white,
+          ),
+        ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
@@ -64,6 +77,12 @@ class _LoginViewState extends State<LoginView> {
                 ),
                 child: _formField(),
               ),
+              if (isLoading) const SizedBox(height: 20),
+              if (isLoading)
+                const LoadingWidget(
+                  width: 100,
+                  text: 'Logging in',
+                ),
             ],
           ),
         ),
@@ -137,8 +156,11 @@ class _LoginViewState extends State<LoginView> {
 
   Future<void> _loginCompany() async {
     FocusManager.instance.primaryFocus?.unfocus();
-    passwordError = null;
-    emailError = null;
+
+    setState(() {
+      passwordError = null;
+      emailError = null;
+    });
 
     final String email = _email.text.trim().toLowerCase();
     final String password = _password.text.trim();
@@ -148,28 +170,37 @@ class _LoginViewState extends State<LoginView> {
       if (password.isEmpty) setPasswordErrorMessage('Password can not be empty.');
     } else {
       try {
+        setState(() => isLoading = true);
         await AuthServices.firebase().login(email: email, password: password);
         final currentUser = AuthServices.firebase().currentUser;
         if (currentUser?.isEmailVerified ?? false) {
           if (mounted) {
+            turnOffLoadingWidget();
             Navigator.of(context).pushNamedAndRemoveUntil(
               HomeView.routeName,
               (route) => false,
             );
           }
         } else {
-          if (mounted) Navigator.of(context).pushNamed(VerifyView.routeName);
+          if (mounted) {
+            turnOffLoadingWidget();
+            Navigator.of(context).pushNamed(VerifyView.routeName);
+          }
         }
       } on UserNotFoundAuthException {
+        turnOffLoadingWidget();
         setEmailErrorMessage("Couldn't find your account.");
       } on WrongPasswordAuthException {
+        turnOffLoadingWidget();
         setPasswordErrorMessage('Wrong password, Please try again!');
       } on GenericAuthException {
-        setPasswordErrorMessage('There is a problem, please try again!');
+        turnOffLoadingWidget();
+        setPasswordErrorMessage('Too many requests, please try again!');
       }
     }
   }
 
   void setPasswordErrorMessage(String message) => setState(() => passwordError = message);
   void setEmailErrorMessage(String message) => setState(() => emailError = message);
+  void turnOffLoadingWidget() => setState(() => isLoading = false);
 }

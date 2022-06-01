@@ -1,6 +1,5 @@
 import 'package:covid_result_app/utils/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show SystemChrome, SystemUiOverlayStyle;
 
 import 'clipped_background.dart';
 
@@ -11,14 +10,6 @@ class ScaffoldBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        statusBarColor: Colors.white,
-        statusBarIconBrightness: Brightness.dark,
-        systemNavigationBarColor: mainColor,
-        systemNavigationBarIconBrightness: Brightness.light,
-      ),
-    );
     return Stack(
       children: [
         Container(
@@ -31,7 +22,7 @@ class ScaffoldBackground extends StatelessWidget {
             child: Container(
               height: 450,
               width: double.maxFinite,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 gradient: gradient1,
               ),
             ),

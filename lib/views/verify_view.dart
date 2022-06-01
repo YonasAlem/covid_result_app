@@ -1,12 +1,13 @@
 import 'dart:async';
 
+import 'package:covid_result_app/widgets/animated_text_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../services/auth_services/auth_services.dart';
 import '../utils/colors.dart';
-import '../widgets/loading_widget.dart';
 import 'home_view.dart';
 import 'login_view.dart';
 
@@ -40,11 +41,17 @@ class _VerifyViewState extends State<VerifyView> {
 
   @override
   Widget build(BuildContext context) {
+    final _email = FirebaseAuth.instance.currentUser!.email;
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: isVerified ? const SizedBox() : BackButton(color: Colors.black),
+        leading: isVerified ? const SizedBox() : const BackButton(color: Colors.black),
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          statusBarIconBrightness: Brightness.dark,
+          statusBarColor: Colors.white,
+        ),
       ),
       body: Column(
         children: [
@@ -58,14 +65,8 @@ class _VerifyViewState extends State<VerifyView> {
               color: isVerified ? Colors.green : mainColor,
             ),
           ),
-          Text(
-            isVerified ? 'Verification Success!' : 'Waiting for verification.',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1,
-              color: isVerified ? Colors.green : Colors.black,
-            ),
+          AnimatedTextWidget(
+            title1: isVerified ? 'Verification Success!' : 'Waiting for verification.',
           ),
           const SizedBox(height: 10),
           Padding(
@@ -73,22 +74,11 @@ class _VerifyViewState extends State<VerifyView> {
             child: Text(
               isVerified
                   ? 'the email verification was success. click the below button to go to the homepage.'
-                  : 'We sent you an email verification link to. Please open the link and verify your email address.',
+                  : 'We sent you an email verification link to \n$_email.\nPlease open the link and verify your email address.',
               textAlign: TextAlign.center,
               style: const TextStyle(color: Colors.grey),
             ),
           ),
-          const SizedBox(height: 30),
-          if (!isVerified)
-            const LoadingWidget(
-              color: mainColor,
-              title: 'Waiting',
-            )
-          else
-            const Icon(
-              Icons.check,
-              color: Colors.green,
-            ),
           const SizedBox(height: 40),
           if (isVerified == false)
             const Text(

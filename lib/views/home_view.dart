@@ -1,4 +1,6 @@
+import 'package:covid_result_app/utils/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class HomeView extends StatelessWidget {
   static const String routeName = '/homeview/';
@@ -10,6 +12,7 @@ class HomeView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home view'),
+        systemOverlayStyle: const SystemUiOverlayStyle(statusBarColor: mainColor),
       ),
     );
   }
