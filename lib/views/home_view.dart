@@ -30,13 +30,13 @@ class _HomeViewState extends State<HomeView> {
           PopupMenuButton<MenuAction>(
             position: PopupMenuPosition.under,
             color: Colors.white,
-            icon: const Icon(Icons.segment, color: Colors.black),
+            icon: const Icon(Icons.segment),
             onSelected: (value) async {
               switch (value) {
                 case MenuAction.logOut:
                   final shouldLogout = await showLogoutDialog();
                   if (shouldLogout) {
-                    AuthServices.firebase().logout();
+                    await AuthServices.firebase().logout();
                     if (mounted) {
                       Navigator.of(context).pushNamedAndRemoveUntil(
                         LoginView.routeName,
@@ -51,12 +51,12 @@ class _HomeViewState extends State<HomeView> {
                 PopupMenuItem(
                   value: MenuAction.logOut,
                   child: Row(
-                    children: const [
-                      Icon(Icons.logout, color: Colors.black),
-                      SizedBox(width: 5),
+                    children: [
+                      const Icon(Icons.logout, color: Colors.grey),
+                      const SizedBox(width: 5),
                       Text(
                         'Logout',
-                        style: TextStyle(color: Colors.black),
+                        style: TextStyle(color: textColor),
                       ),
                     ],
                   ),
@@ -74,8 +74,8 @@ class _HomeViewState extends State<HomeView> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Sign out'),
-          content: const Text('Are you sure you want to sign out?'),
+          title: const Text('Logging out'),
+          content: const Text('Are you sure you want to logout?'),
           actions: [
             TextButton(
               onPressed: () {
