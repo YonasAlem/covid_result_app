@@ -16,3 +16,9 @@ const BoxShadow boxShadow1 = BoxShadow(
   spreadRadius: 1,
   offset: Offset(0, 10),
 );
+const BoxShadow boxShadow2 = BoxShadow(
+  color: Colors.black26,
+  blurRadius: 10,
+  spreadRadius: 1,
+  offset: Offset(0, 5),
+);

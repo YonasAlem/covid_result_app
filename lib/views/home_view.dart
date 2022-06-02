@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:covid_result_app/utils/colors.dart';
 import 'package:covid_result_app/widgets/text_widget_big.dart';
 import 'package:flutter/material.dart';
@@ -15,9 +17,38 @@ class HomeView extends StatefulWidget {
   State<HomeView> createState() => _HomeViewState();
 }
 
-enum MenuAction { logOut }
+enum MenuAction { logOut, exit }
 
 class _HomeViewState extends State<HomeView> {
+  List<PopupMenuItem<MenuAction>> popUpMenuItemList = [
+    PopupMenuItem(
+      value: MenuAction.logOut,
+      child: Row(
+        children: [
+          const Icon(Icons.logout, color: Colors.grey),
+          const SizedBox(width: 5),
+          Text(
+            'Logout',
+            style: TextStyle(color: textColor),
+          ),
+        ],
+      ),
+    ),
+    PopupMenuItem(
+      value: MenuAction.exit,
+      child: Row(
+        children: [
+          const Icon(Icons.close, color: Colors.grey),
+          const SizedBox(width: 5),
+          Text(
+            'Exit app',
+            style: TextStyle(color: textColor),
+          ),
+        ],
+      ),
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,38 +72,8 @@ class _HomeViewState extends State<HomeView> {
               Icons.segment,
               color: textColor,
             ),
-            onSelected: (value) async {
-              switch (value) {
-                case MenuAction.logOut:
-                  final shouldLogout = await showLogoutDialog();
-                  if (shouldLogout) {
-                    await AuthServices.firebase().logout();
-                    if (mounted) {
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                        LoginView.routeName,
-                        (route) => false,
-                      );
-                    }
-                  }
-              }
-            },
-            itemBuilder: (context) {
-              return [
-                PopupMenuItem(
-                  value: MenuAction.logOut,
-                  child: Row(
-                    children: [
-                      const Icon(Icons.logout, color: Colors.grey),
-                      const SizedBox(width: 5),
-                      Text(
-                        'Logout',
-                        style: TextStyle(color: textColor),
-                      ),
-                    ],
-                  ),
-                ),
-              ];
-            },
+            onSelected: popUpMenuHandler,
+            itemBuilder: (context) => popUpMenuItemList,
           ),
         ],
       ),
@@ -81,54 +82,69 @@ class _HomeViewState extends State<HomeView> {
         child: Column(
           children: [
             const SizedBox(height: 20),
-            Container(
-              height: 120,
-              width: double.maxFinite,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              decoration: BoxDecoration(
-                gradient: gradient1,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 10,
-                    spreadRadius: 1,
-                    offset: Offset(0, 5),
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: const [
-                  SizedBox(height: 10),
-                  TextWidgetBig(
-                    text: 'Attention!',
-                    color: Colors.white,
-                  ),
-                  SizedBox(height: 10),
-                  Expanded(
-                    child: Text(
-                      'This product should be used only by proffesionals, specially for health care centers.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white70,
-                        height: 1.3,
-                        fontSize: 12,
-                        letterSpacing: 1,
-                        fontFamily: 'Foo-Bold',
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            _headerCard(),
           ],
         ),
       ),
     );
   }
 
-  Future<bool> showLogoutDialog() {
+  Future<void> popUpMenuHandler(value) async {
+    switch (value) {
+      case MenuAction.logOut:
+        final shouldLogout = await _showLogoutDialog();
+        if (shouldLogout) {
+          await AuthServices.firebase().logout();
+          if (mounted) {
+            Navigator.of(context).pushNamedAndRemoveUntil(
+              LoginView.routeName,
+              (route) => false,
+            );
+          }
+        }
+        break;
+      case MenuAction.exit:
+        exit(0);
+    }
+  }
+
+  Container _headerCard() {
+    return Container(
+      height: 120,
+      width: double.maxFinite,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      decoration: BoxDecoration(
+        gradient: gradient1,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: const [boxShadow2],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          const SizedBox(height: 10),
+          const TextWidgetBig(
+            text: 'Attention!',
+            color: Colors.white,
+          ),
+          const SizedBox(height: 10),
+          Expanded(
+            child: Text(
+              'This product should be used only by proffesionals, specially for health care centers.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.grey[200],
+                height: 1.3,
+                fontSize: 12,
+                letterSpacing: 1,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<bool> _showLogoutDialog() {
     return showDialog<bool>(
       context: context,
       builder: (context) {
