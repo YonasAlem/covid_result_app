@@ -31,9 +31,9 @@ class _VerifyViewState extends State<VerifyView> {
   }
 
   autoCheckEmailVerification(timer) async {
-    final currentUser = FirebaseAuth.instance.currentUser;
-    await currentUser?.reload();
-    if (currentUser?.emailVerified ?? false) {
+    final currentUser = AuthServices.firebase().currentUser;
+    await currentUser?.reload;
+    if (currentUser?.isEmailVerified ?? false) {
       timer.cancel();
       setState(() => isVerified = true);
     }
@@ -41,7 +41,6 @@ class _VerifyViewState extends State<VerifyView> {
 
   @override
   Widget build(BuildContext context) {
-    final _email = FirebaseAuth.instance.currentUser!.email;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -74,8 +73,14 @@ class _VerifyViewState extends State<VerifyView> {
                 color: isVerified ? Colors.green : mainColor,
               ),
             ),
-            AnimatedTextWidget(
-              title1: isVerified ? 'Verification Success!' : 'Waiting for verification.',
+            Text(
+              isVerified ? 'Verification Success!' : 'Waiting for verification.',
+              style: TextStyle(
+                fontSize: 22,
+                letterSpacing: 1,
+                fontFamily: 'Bold',
+                color: Colors.grey.shade700,
+              ),
             ),
             const SizedBox(height: 10),
             Padding(
@@ -107,7 +112,7 @@ class _VerifyViewState extends State<VerifyView> {
             const SizedBox(height: 20),
             if (isVerified == false)
               Text(
-                'If ( $_email ) is not your email \naddress please',
+                'If ( ${AuthServices.firebase().currentUser?.email} ) is not your email \naddress please',
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   color: Colors.grey,
