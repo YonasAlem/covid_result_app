@@ -1,6 +1,7 @@
 import 'package:covid_result_app/utils/colors.dart';
 import 'package:covid_result_app/views/login_view.dart';
 import 'package:covid_result_app/widgets/auth_views_widgets/auth_text_field.dart';
+import 'package:covid_result_app/widgets/display_toast.dart';
 import 'package:covid_result_app/widgets/scaffold_background.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -140,14 +141,7 @@ class _RegisterViewState extends State<RegisterView> {
           tag: 'SubmitButtonBig',
           child: SubmitButtonBig(
             onTap: isLoading
-                ? () {
-                    Fluttertoast.showToast(
-                      msg: 'Please wait ...',
-                      textColor: Colors.white,
-                      gravity: ToastGravity.BOTTOM,
-                      backgroundColor: Colors.black45,
-                    );
-                  }
+                ? () => displayToast(message: 'Please wait while loading ...')
                 : _registerCompany,
             gradient: gradient1,
             child: isLoading
@@ -171,14 +165,7 @@ class _RegisterViewState extends State<RegisterView> {
             ),
             SubmitButtonSmall(
               onTap: isLoading
-                  ? () {
-                      Fluttertoast.showToast(
-                        msg: 'Please wait ...',
-                        textColor: Colors.white,
-                        gravity: ToastGravity.BOTTOM,
-                        backgroundColor: Colors.black45,
-                      );
-                    }
+                  ? () => displayToast(message: 'Please wait while loading ...')
                   : () {
                       box.write('email1', _email.text);
                       return Navigator.of(context).pushReplacementNamed(LoginView.routeName);
@@ -232,12 +219,7 @@ class _RegisterViewState extends State<RegisterView> {
         setEmailErrorMessage('The email is invalid. Try another');
       } on GenericAuthException {
         turnOffLoadingWidget();
-        Fluttertoast.showToast(
-          msg: 'Too many requests, please try again!',
-          textColor: Colors.white,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.black45,
-        );
+        displayToast(message: 'Too many requests, please try again!');
       }
     }
   }

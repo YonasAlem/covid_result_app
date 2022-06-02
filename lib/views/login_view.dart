@@ -1,6 +1,7 @@
 import 'package:covid_result_app/views/register_view.dart';
 import 'package:covid_result_app/widgets/animated_text_widget.dart';
 import 'package:covid_result_app/widgets/auth_views_widgets/logo_and_title.dart';
+import 'package:covid_result_app/widgets/display_toast.dart';
 import 'package:covid_result_app/widgets/scaffold_background.dart';
 import 'package:covid_result_app/widgets/submit_button_small.dart';
 import 'package:covid_result_app/widgets/text_widget_small.dart';
@@ -131,14 +132,7 @@ class _LoginViewState extends State<LoginView> {
           tag: 'SubmitButtonBig',
           child: SubmitButtonBig(
             onTap: isLoading
-                ? () {
-                    Fluttertoast.showToast(
-                      msg: 'Please wait ...',
-                      textColor: Colors.white,
-                      gravity: ToastGravity.BOTTOM,
-                      backgroundColor: Colors.black45,
-                    );
-                  }
+                ? () => displayToast(message: 'Please wait while loading ...')
                 : _loginCompany,
             gradient: gradient1,
             child: isLoading
@@ -162,14 +156,7 @@ class _LoginViewState extends State<LoginView> {
             ),
             SubmitButtonSmall(
               onTap: isLoading
-                  ? () {
-                      Fluttertoast.showToast(
-                        msg: 'Please wait ...',
-                        textColor: Colors.white,
-                        gravity: ToastGravity.BOTTOM,
-                        backgroundColor: Colors.black45,
-                      );
-                    }
+                  ? () => displayToast(message: 'Please wait while loading ...')
                   : () {
                       box.write('email1', _email.text);
                       return Navigator.of(context).pushReplacementNamed(
@@ -227,12 +214,7 @@ class _LoginViewState extends State<LoginView> {
         setPasswordErrorMessage('Wrong password, Please try again!');
       } on GenericAuthException {
         turnOffLoadingWidget();
-        Fluttertoast.showToast(
-          msg: 'Too many requests, please try again!',
-          textColor: Colors.white,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.black45,
-        );
+        displayToast(message: 'Too many requests, please try again!');
       }
     }
   }
