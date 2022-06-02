@@ -40,7 +40,9 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   void initState() {
-    _email.text = box.read('email') ?? '';
+    if (box.read('email') != null && box.read('email1') != null) {
+      _email.text = box.read('email') == box.read('email1') ? box.read('email') : '';
+    }
     _password.addListener(() => setState(() {}));
 
     super.initState();
@@ -105,7 +107,6 @@ class _LoginViewState extends State<LoginView> {
           color: secondaryColor,
         ),
         const TextWidgetSmall(text: 'Email address'),
-        const SizedBox(height: 5),
         AuthTextField(
           controller: _email,
           hintText: 'enter company\'s email',
@@ -153,9 +154,10 @@ class _LoginViewState extends State<LoginView> {
               onTap: isLoading
                   ? null
                   : () {
-                      box.write('email', _email.text);
-                      return Navigator.of(context)
-                          .pushReplacementNamed(RegisterView.routeName);
+                      box.write('email1', _email.text);
+                      return Navigator.of(context).pushReplacementNamed(
+                        RegisterView.routeName,
+                      );
                     },
               context: context,
               text: 'Register.',
@@ -200,6 +202,7 @@ class _LoginViewState extends State<LoginView> {
           }
         }
       } on UserNotFoundAuthException {
+        box.write('email', _email.text);
         turnOffLoadingWidget();
         setEmailErrorMessage("Couldn't find your account.");
       } on WrongPasswordAuthException {

@@ -40,7 +40,9 @@ class _RegisterViewState extends State<RegisterView> {
 
   @override
   void initState() {
-    _email.text = box.read('email') ?? '';
+    if (box.read('email') != null && box.read('email1') != null) {
+      _email.text = box.read('email') == box.read('email1') ? box.read('email') : '';
+    }
     _password.addListener(() => setState(() {}));
     _confirmPassword.addListener(() => setState(() {}));
 
@@ -161,7 +163,7 @@ class _RegisterViewState extends State<RegisterView> {
               onTap: isLoading
                   ? null
                   : () {
-                      box.write('email', _email.text);
+                      box.write('email1', _email.text);
                       return Navigator.of(context).pushReplacementNamed(LoginView.routeName);
                     },
               text: 'Login.',
@@ -202,6 +204,7 @@ class _RegisterViewState extends State<RegisterView> {
           Navigator.of(context).pushNamed(VerifyView.routeName, arguments: email);
         }
       } on EmailAlreadyInUseAuthException {
+        box.write('email', _email.text);
         turnOffLoadingWidget();
         setEmailErrorMessage('The email is taken. Try another.');
       } on WeakPasswordAuthException {

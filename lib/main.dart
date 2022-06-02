@@ -77,6 +77,7 @@ class FirstScreenHandler extends StatelessWidget {
         switch (snapshot.connectionState) {
           case ConnectionState.done:
             final AuthUser? user = AuthServices.firebase().currentUser;
+            GetStorage().remove('email');
             if (user != null) {
               if (user.isEmailVerified) {
                 return const HomeView();
