@@ -1,4 +1,5 @@
 import 'package:covid_result_app/utils/colors.dart';
+import 'package:covid_result_app/widgets/text_widget_big.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -20,17 +21,26 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Home view'),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: Text(
+          'Home view',
+          style: TextStyle(color: textColor),
+        ),
         systemOverlayStyle: const SystemUiOverlayStyle(
-          statusBarColor: mainColor,
-          statusBarIconBrightness: Brightness.light,
+          statusBarColor: Colors.white,
+          statusBarIconBrightness: Brightness.dark,
         ),
         actions: [
           PopupMenuButton<MenuAction>(
             position: PopupMenuPosition.under,
             color: Colors.white,
-            icon: const Icon(Icons.segment),
+            icon: Icon(
+              Icons.segment,
+              color: textColor,
+            ),
             onSelected: (value) async {
               switch (value) {
                 case MenuAction.logOut:
@@ -65,6 +75,55 @@ class _HomeViewState extends State<HomeView> {
             },
           ),
         ],
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          children: [
+            const SizedBox(height: 20),
+            Container(
+              height: 120,
+              width: double.maxFinite,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              decoration: BoxDecoration(
+                gradient: gradient1,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 10,
+                    spreadRadius: 1,
+                    offset: Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: const [
+                  SizedBox(height: 10),
+                  TextWidgetBig(
+                    text: 'Attention!',
+                    color: Colors.white,
+                  ),
+                  SizedBox(height: 10),
+                  Expanded(
+                    child: Text(
+                      'This product should be used only by proffesionals, specially for health care centers.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white70,
+                        height: 1.3,
+                        fontSize: 12,
+                        letterSpacing: 1,
+                        fontFamily: 'Foo-Bold',
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,18 +1,21 @@
+import 'package:covid_result_app/utils/colors.dart';
 import 'package:flutter/material.dart';
 
 class TextWidgetBig extends StatelessWidget {
-  const TextWidgetBig({Key? key, required this.text}) : super(key: key);
+  const TextWidgetBig({Key? key, required this.text, this.color}) : super(key: key);
 
   final String text;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: const TextStyle(
+      style: TextStyle(
         letterSpacing: 1,
         fontSize: 22,
         fontFamily: 'Bold',
+        color: color ?? textColor,
       ),
     );
   }

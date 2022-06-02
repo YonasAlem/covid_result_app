@@ -26,7 +26,6 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Covid Result',
       theme: ThemeData(
-        primarySwatch: mainColor,
         fontFamily: 'Regular',
       ),
       home: const FirstScreenHandler(),

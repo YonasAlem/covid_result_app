@@ -6,7 +6,7 @@ LinearGradient gradient1 = LinearGradient(
   end: Alignment.topRight,
 );
 
-const mainColor = Colors.blue;
+final mainColor = Colors.blue[800]!;
 const Color secondaryColor = Colors.cyan;
 Color textColor = Colors.grey[800]!;
 
