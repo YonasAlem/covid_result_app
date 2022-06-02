@@ -7,6 +7,7 @@ import 'package:covid_result_app/widgets/text_widget_small.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_storage/get_storage.dart';
 
 import '../services/auth_services/auth_exceptions.dart';
@@ -129,7 +130,16 @@ class _LoginViewState extends State<LoginView> {
         Hero(
           tag: 'SubmitButtonBig',
           child: SubmitButtonBig(
-            onTap: isLoading ? null : _loginCompany,
+            onTap: isLoading
+                ? () {
+                    Fluttertoast.showToast(
+                      msg: 'Please wait ...',
+                      textColor: Colors.white,
+                      gravity: ToastGravity.BOTTOM,
+                      backgroundColor: Colors.black45,
+                    );
+                  }
+                : _loginCompany,
             gradient: gradient1,
             child: isLoading
                 ? const SpinKitCircle(color: Colors.white, size: 30)
@@ -152,7 +162,14 @@ class _LoginViewState extends State<LoginView> {
             ),
             SubmitButtonSmall(
               onTap: isLoading
-                  ? null
+                  ? () {
+                      Fluttertoast.showToast(
+                        msg: 'Please wait ...',
+                        textColor: Colors.white,
+                        gravity: ToastGravity.BOTTOM,
+                        backgroundColor: Colors.black45,
+                      );
+                    }
                   : () {
                       box.write('email1', _email.text);
                       return Navigator.of(context).pushReplacementNamed(
@@ -210,7 +227,12 @@ class _LoginViewState extends State<LoginView> {
         setPasswordErrorMessage('Wrong password, Please try again!');
       } on GenericAuthException {
         turnOffLoadingWidget();
-        setPasswordErrorMessage('Too many requests, please try again!');
+        Fluttertoast.showToast(
+          msg: 'Too many requests, please try again!',
+          textColor: Colors.white,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.black45,
+        );
       }
     }
   }
