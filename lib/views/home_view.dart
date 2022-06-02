@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../services/auth_services/auth_services.dart';
+import '../widgets/warning_dialog.dart';
 import 'login_view.dart';
 
 class HomeView extends StatefulWidget {
@@ -92,7 +93,13 @@ class _HomeViewState extends State<HomeView> {
   Future<void> popUpMenuHandler(value) async {
     switch (value) {
       case MenuAction.logOut:
-        final shouldLogout = await _showLogoutDialog();
+        final shouldLogout = await warningDialog(
+          context: context,
+          boxTitle: 'Logging out',
+          boxDescription: 'Are you sure you want to logout?',
+          cancleText: 'Cancel',
+          okText: 'Logout',
+        );
         if (shouldLogout) {
           await AuthServices.firebase().logout();
           if (mounted) {
@@ -104,7 +111,14 @@ class _HomeViewState extends State<HomeView> {
         }
         break;
       case MenuAction.exit:
-        exit(0);
+        final shouldExit = await warningDialog(
+          context: context,
+          boxTitle: 'Exit the app',
+          boxDescription: 'Are you sure you want to quit the app?',
+          cancleText: 'Cancel',
+          okText: 'Exit',
+        );
+        if (shouldExit) exit(0);
     }
   }
 
@@ -142,35 +156,5 @@ class _HomeViewState extends State<HomeView> {
         ],
       ),
     );
-  }
-
-  Future<bool> _showLogoutDialog() {
-    return showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Logging out'),
-          content: const Text('Are you sure you want to logout?'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(false);
-              },
-              child: const Text(
-                'Cancel',
-                style: TextStyle(color: secondaryColor),
-              ),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: Text(
-                'Logout',
-                style: TextStyle(color: Colors.red.shade800),
-              ),
-            ),
-          ],
-        );
-      },
-    ).then((value) => value ?? false);
   }
 }
