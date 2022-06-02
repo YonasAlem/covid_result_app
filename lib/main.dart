@@ -3,6 +3,7 @@ import 'package:covid_result_app/services/auth_services/auth_user.dart';
 import 'package:covid_result_app/views/home_view.dart';
 import 'package:covid_result_app/views/verify_view.dart';
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:page_transition/page_transition.dart';
 
 import 'utils/colors.dart';
@@ -10,8 +11,9 @@ import 'views/login_view.dart';
 import 'views/register_view.dart';
 import 'widgets/auth_views_widgets/logo_and_title.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await GetStorage.init();
   runApp(const MyApp());
 }
 

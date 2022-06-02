@@ -5,6 +5,7 @@ import 'package:covid_result_app/widgets/scaffold_background.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:get_storage/get_storage.dart';
 
 import '../services/auth_services/auth_exceptions.dart';
 import '../services/auth_services/auth_services.dart';
@@ -33,10 +34,13 @@ class _RegisterViewState extends State<RegisterView> {
   String? emailError;
   String? passwordError;
 
+  GetStorage box = GetStorage();
+
   bool isLoading = false;
 
   @override
   void initState() {
+    _email.text = box.read('email') ?? '';
     _password.addListener(() => setState(() {}));
     _confirmPassword.addListener(() => setState(() {}));
 
@@ -156,7 +160,10 @@ class _RegisterViewState extends State<RegisterView> {
             SubmitButtonSmall(
               onTap: isLoading
                   ? null
-                  : () => Navigator.of(context).pushReplacementNamed(LoginView.routeName),
+                  : () {
+                      box.write('email', _email.text);
+                      return Navigator.of(context).pushReplacementNamed(LoginView.routeName);
+                    },
               text: 'Login.',
               context: context,
             ),

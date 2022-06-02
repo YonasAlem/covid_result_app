@@ -7,6 +7,7 @@ import 'package:covid_result_app/widgets/text_widget_small.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:get_storage/get_storage.dart';
 
 import '../services/auth_services/auth_exceptions.dart';
 import '../services/auth_services/auth_services.dart';
@@ -35,8 +36,11 @@ class _LoginViewState extends State<LoginView> {
 
   bool isLoading = false;
 
+  GetStorage box = GetStorage();
+
   @override
   void initState() {
+    _email.text = box.read('email') ?? '';
     _password.addListener(() => setState(() {}));
 
     super.initState();
@@ -77,12 +81,6 @@ class _LoginViewState extends State<LoginView> {
                 ),
                 child: _formField(),
               ),
-              // if (isLoading) const SizedBox(height: 20),
-              // if (isLoading)
-              //   const LoadingWidget(
-              //     width: 100,
-              //     text: 'Logging in',
-              //   ),
             ],
           ),
         ),
@@ -130,7 +128,7 @@ class _LoginViewState extends State<LoginView> {
         Hero(
           tag: 'SubmitButtonBig',
           child: SubmitButtonBig(
-            onTap: _loginCompany,
+            onTap: isLoading ? null : _loginCompany,
             gradient: gradient1,
             child: isLoading
                 ? const SpinKitCircle(color: Colors.white, size: 30)
@@ -154,7 +152,11 @@ class _LoginViewState extends State<LoginView> {
             SubmitButtonSmall(
               onTap: isLoading
                   ? null
-                  : () => Navigator.of(context).pushReplacementNamed(RegisterView.routeName),
+                  : () {
+                      box.write('email', _email.text);
+                      return Navigator.of(context)
+                          .pushReplacementNamed(RegisterView.routeName);
+                    },
               context: context,
               text: 'Register.',
             )

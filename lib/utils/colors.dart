@@ -8,7 +8,7 @@ LinearGradient gradient1 = LinearGradient(
 
 const mainColor = Colors.blue;
 const Color secondaryColor = Colors.cyan;
-Color textColor = Colors.grey[900]!;
+Color textColor = Colors.grey[800]!;
 
 const BoxShadow boxShadow1 = BoxShadow(
   color: Colors.black26,
