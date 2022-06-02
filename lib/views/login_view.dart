@@ -77,12 +77,12 @@ class _LoginViewState extends State<LoginView> {
                 ),
                 child: _formField(),
               ),
-              if (isLoading) const SizedBox(height: 20),
-              if (isLoading)
-                const LoadingWidget(
-                  width: 100,
-                  text: 'Logging in',
-                ),
+              // if (isLoading) const SizedBox(height: 20),
+              // if (isLoading)
+              //   const LoadingWidget(
+              //     width: 100,
+              //     text: 'Logging in',
+              //   ),
             ],
           ),
         ),
@@ -130,9 +130,17 @@ class _LoginViewState extends State<LoginView> {
         Hero(
           tag: 'SubmitButtonBig',
           child: SubmitButtonBig(
-            onTap: isLoading ? null : _loginCompany,
-            text: 'Login',
+            onTap: _loginCompany,
             gradient: gradient1,
+            child: isLoading
+                ? const SpinKitCircle(color: Colors.white, size: 30)
+                : const Text(
+                    'Login',
+                    style: TextStyle(
+                      letterSpacing: 1,
+                      fontFamily: 'Bold',
+                    ),
+                  ),
           ),
         ),
         const SizedBox(height: 10),

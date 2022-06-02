@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 class SubmitButtonBig extends StatelessWidget {
-  const SubmitButtonBig({Key? key, this.gradient, this.color, required this.text, this.onTap})
+  const SubmitButtonBig({Key? key, this.gradient, this.color, required this.child, this.onTap})
       : super(key: key);
 
   final LinearGradient? gradient;
   final Color? color;
-  final String text;
+  final Widget child;
   final Function()? onTap;
 
   @override
@@ -28,13 +28,7 @@ class SubmitButtonBig extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
           ),
         ),
-        child: Text(
-          text,
-          style: const TextStyle(
-            letterSpacing: 1,
-            fontFamily: 'Bold',
-          ),
-        ),
+        child: child,
       ),
     );
   }

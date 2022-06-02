@@ -4,6 +4,7 @@ import 'package:covid_result_app/widgets/auth_views_widgets/auth_text_field.dart
 import 'package:covid_result_app/widgets/scaffold_background.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import '../services/auth_services/auth_exceptions.dart';
 import '../services/auth_services/auth_services.dart';
@@ -78,12 +79,6 @@ class _RegisterViewState extends State<RegisterView> {
                 ),
                 child: _formField(),
               ),
-              if (isLoading) const SizedBox(height: 20),
-              if (isLoading)
-                const LoadingWidget(
-                  width: 100,
-                  text: 'Registering',
-                ),
             ],
           ),
         ),
@@ -138,8 +133,16 @@ class _RegisterViewState extends State<RegisterView> {
           tag: 'SubmitButtonBig',
           child: SubmitButtonBig(
             onTap: isLoading ? null : _registerCompany,
-            text: 'Register',
             gradient: gradient1,
+            child: isLoading
+                ? const SpinKitCircle(color: Colors.white, size: 30)
+                : const Text(
+                    'Register',
+                    style: TextStyle(
+                      letterSpacing: 1,
+                      fontFamily: 'Bold',
+                    ),
+                  ),
           ),
         ),
         const SizedBox(height: 10),
