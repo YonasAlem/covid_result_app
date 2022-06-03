@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:covid_result_app/utils/colors.dart';
+import 'package:covid_result_app/widgets/home_view_widgets/qr_scanner_button.dart';
 import 'package:covid_result_app/widgets/text_widget_big.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -155,6 +156,20 @@ class _HomeViewState extends State<HomeView> {
                   ),
                 ),
               ],
+            ),
+            const SizedBox(height: 30),
+            Text(
+              'Find Records Using',
+              style: TextStyle(
+                color: textColor,
+                fontSize: 20,
+                letterSpacing: 1,
+                fontFamily: 'Bold',
+              ),
+            ),
+            const SizedBox(height: 20),
+            QrScannerButton(
+              onTap: () {},
             ),
           ],
         ),
