@@ -114,7 +114,7 @@ class _HomeViewState extends State<HomeView> {
               children: [
                 Expanded(
                   child: TaskButton(
-                    onTap: () {},
+                    onTap: registerPatient,
                     color: const Color(0xFF628ec5),
                     icon: Icons.post_add,
                     title: 'Register',
@@ -124,7 +124,7 @@ class _HomeViewState extends State<HomeView> {
                 const SizedBox(width: 20),
                 Expanded(
                   child: TaskButton(
-                    onTap: () {},
+                    onTap: updatePatient,
                     color: const Color(0xffb774bd),
                     icon: Icons.update_rounded,
                     title: 'Update',
@@ -138,7 +138,7 @@ class _HomeViewState extends State<HomeView> {
               children: [
                 Expanded(
                   child: TaskButton(
-                    onTap: () {},
+                    onTap: viewPatient,
                     color: const Color(0xFFdb7634),
                     icon: Icons.view_list_rounded,
                     title: 'View All',
@@ -148,7 +148,7 @@ class _HomeViewState extends State<HomeView> {
                 const SizedBox(width: 20),
                 Expanded(
                   child: TaskButton(
-                    onTap: () {},
+                    onTap: deletePatient,
                     icon: Icons.delete_outline,
                     color: const Color(0xff8866cf),
                     title: 'Delete',
@@ -169,13 +169,19 @@ class _HomeViewState extends State<HomeView> {
             ),
             const SizedBox(height: 20),
             QrScannerButton(
-              onTap: () {},
+              onTap: scanQrData,
             ),
           ],
         ),
       ),
     );
   }
+
+  registerPatient() {}
+  updatePatient() {}
+  viewPatient() {}
+  deletePatient() {}
+  scanQrData() {}
 
   Future<void> popUpMenuHandler(value) async {
     switch (value) {
