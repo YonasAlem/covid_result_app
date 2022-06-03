@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../services/auth_services/auth_services.dart';
+import '../widgets/home_view_widgets/task_button.dart';
 import '../widgets/warning_dialog.dart';
 import 'login_view.dart';
 
@@ -57,33 +58,104 @@ class _HomeViewState extends State<HomeView> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: Text(
-          'Home view',
-          style: TextStyle(color: textColor),
+        title: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Text(
+            'Home view',
+            style: TextStyle(
+              color: textColor,
+              fontFamily: 'Bold',
+              letterSpacing: 1,
+            ),
+          ),
         ),
         systemOverlayStyle: const SystemUiOverlayStyle(
           statusBarColor: Colors.white,
           statusBarIconBrightness: Brightness.dark,
         ),
         actions: [
-          PopupMenuButton<MenuAction>(
-            position: PopupMenuPosition.under,
-            color: Colors.white,
-            icon: Icon(
-              Icons.segment,
-              color: textColor,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: PopupMenuButton<MenuAction>(
+              position: PopupMenuPosition.under,
+              color: Colors.white,
+              icon: Icon(
+                Icons.segment,
+                color: textColor,
+              ),
+              onSelected: popUpMenuHandler,
+              itemBuilder: (context) => popUpMenuItemList,
             ),
-            onSelected: popUpMenuHandler,
-            itemBuilder: (context) => popUpMenuItemList,
           ),
         ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 20),
             _headerCard(),
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 5),
+              child: Text(
+                'Tasks',
+                style: TextStyle(
+                  color: textColor,
+                  fontSize: 20,
+                  letterSpacing: 1,
+                  fontFamily: 'Bold',
+                ),
+              ),
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: TaskButton(
+                    onTap: () {},
+                    color: const Color(0xFF628ec5),
+                    icon: Icons.post_add,
+                    title: 'Register',
+                    desc: 'Create new patient record.',
+                  ),
+                ),
+                const SizedBox(width: 20),
+                Expanded(
+                  child: TaskButton(
+                    onTap: () {},
+                    color: const Color(0xffb774bd),
+                    icon: Icons.update_rounded,
+                    title: 'Update',
+                    desc: 'Alter an existing record.',
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                Expanded(
+                  child: TaskButton(
+                    onTap: () {},
+                    color: const Color(0xFFdb7634),
+                    icon: Icons.view_list_rounded,
+                    title: 'View All',
+                    desc: 'Display all records from database.',
+                  ),
+                ),
+                const SizedBox(width: 20),
+                Expanded(
+                  child: TaskButton(
+                    onTap: () {},
+                    icon: Icons.delete_outline,
+                    color: const Color(0xff8866cf),
+                    title: 'Delete',
+                    desc: 'Remove an existing record from database.',
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),

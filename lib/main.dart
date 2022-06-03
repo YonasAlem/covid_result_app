@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:page_transition/page_transition.dart';
 
-import 'utils/colors.dart';
 import 'views/login_view.dart';
 import 'views/register_view.dart';
 import 'widgets/auth_views_widgets/logo_and_title.dart';
