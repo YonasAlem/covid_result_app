@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:covid_result_app/utils/colors.dart';
+import 'package:covid_result_app/views/patient_register_view.dart';
 import 'package:covid_result_app/widgets/home_view_widgets/qr_scanner_button.dart';
 import 'package:covid_result_app/widgets/text_widget_big.dart';
 import 'package:flutter/material.dart';
@@ -71,7 +72,7 @@ class _HomeViewState extends State<HomeView> {
           ),
         ),
         systemOverlayStyle: const SystemUiOverlayStyle(
-          statusBarColor: Colors.white,
+          statusBarColor: Colors.transparent,
           statusBarIconBrightness: Brightness.dark,
         ),
         actions: [
@@ -177,7 +178,10 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  registerPatient() {}
+  registerPatient() {
+    Navigator.of(context).pushNamed(PatientRegisterView.routeName);
+  }
+
   updatePatient() {}
   viewPatient() {}
   deletePatient() {}
