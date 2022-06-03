@@ -55,126 +55,148 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Text(
-            'Home view',
-            style: TextStyle(
-              color: textColor,
-              fontFamily: 'Bold',
-              letterSpacing: 1,
-            ),
-          ),
+    return Stack(
+      children: [
+        Container(
+          color: Colors.white,
         ),
-        systemOverlayStyle: const SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          statusBarIconBrightness: Brightness.dark,
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: PopupMenuButton<MenuAction>(
-              position: PopupMenuPosition.under,
-              color: Colors.white,
-              icon: Icon(
-                Icons.segment,
-                color: textColor,
+        Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: Container(
+            height: 160,
+            decoration: BoxDecoration(
+              gradient: gradient1,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(50),
+                topRight: Radius.circular(50),
               ),
-              onSelected: popUpMenuHandler,
-              itemBuilder: (context) => popUpMenuItemList,
             ),
           ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 20),
-            _headerCard(),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 5),
+        ),
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            title: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Text(
-                'Tasks',
+                'Home view',
                 style: TextStyle(
                   color: textColor,
-                  fontSize: 20,
-                  letterSpacing: 1,
                   fontFamily: 'Bold',
+                  letterSpacing: 1,
                 ),
               ),
             ),
-            Row(
-              children: [
-                Expanded(
-                  child: TaskButton(
-                    onTap: registerPatient,
-                    color: const Color(0xFF628ec5),
-                    icon: Icons.post_add,
-                    title: 'Register',
-                    desc: 'Create new patient record.',
-                  ),
-                ),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: TaskButton(
-                    onTap: updatePatient,
-                    color: const Color(0xffb774bd),
-                    icon: Icons.update_rounded,
-                    title: 'Update',
-                    desc: 'Alter an existing record.',
-                  ),
-                ),
-              ],
+            systemOverlayStyle: const SystemUiOverlayStyle(
+              statusBarColor: Colors.transparent,
+              statusBarIconBrightness: Brightness.dark,
             ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(
-                  child: TaskButton(
-                    onTap: viewPatient,
-                    color: const Color(0xFFdb7634),
-                    icon: Icons.view_list_rounded,
-                    title: 'View All',
-                    desc: 'Display all records from database.',
+            actions: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: PopupMenuButton<MenuAction>(
+                  position: PopupMenuPosition.under,
+                  color: Colors.white,
+                  icon: Icon(
+                    Icons.segment,
+                    color: textColor,
                   ),
+                  onSelected: popUpMenuHandler,
+                  itemBuilder: (context) => popUpMenuItemList,
                 ),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: TaskButton(
-                    onTap: deletePatient,
-                    icon: Icons.delete_outline,
-                    color: const Color(0xff8866cf),
-                    title: 'Delete',
-                    desc: 'Remove an existing record from database.',
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 30),
-            Text(
-              'Find Records Using',
-              style: TextStyle(
-                color: textColor,
-                fontSize: 20,
-                letterSpacing: 1,
-                fontFamily: 'Bold',
               ),
+            ],
+          ),
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 20),
+                _headerCard(),
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 5),
+                  child: Text(
+                    'Tasks',
+                    style: TextStyle(
+                      color: textColor,
+                      fontSize: 20,
+                      letterSpacing: 1,
+                      fontFamily: 'Bold',
+                    ),
+                  ),
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TaskButton(
+                        onTap: registerPatient,
+                        color: const Color(0xFF628ec5),
+                        icon: Icons.post_add,
+                        title: 'Register',
+                        desc: 'Create new patient record.',
+                      ),
+                    ),
+                    const SizedBox(width: 20),
+                    Expanded(
+                      child: TaskButton(
+                        onTap: updatePatient,
+                        color: const Color(0xffb774bd),
+                        icon: Icons.update_rounded,
+                        title: 'Update',
+                        desc: 'Alter an existing record.',
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TaskButton(
+                        onTap: viewPatient,
+                        color: const Color(0xFFdb7634),
+                        icon: Icons.view_list_rounded,
+                        title: 'View All',
+                        desc: 'Display all records from database.',
+                      ),
+                    ),
+                    const SizedBox(width: 20),
+                    Expanded(
+                      child: TaskButton(
+                        onTap: deletePatient,
+                        icon: Icons.delete_outline,
+                        color: const Color(0xff8866cf),
+                        title: 'Delete',
+                        desc: 'Remove an existing record from database.',
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 30),
+                Text(
+                  'Find Records Using',
+                  style: TextStyle(
+                    color: textColor,
+                    fontSize: 20,
+                    letterSpacing: 1,
+                    fontFamily: 'Bold',
+                  ),
+                ),
+                const SizedBox(height: 20),
+                QrScannerButton(
+                  onTap: scanQrData,
+                ),
+              ],
             ),
-            const SizedBox(height: 20),
-            QrScannerButton(
-              onTap: scanQrData,
-            ),
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 

@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'clipped_background.dart';
 
 class ScaffoldBackground extends StatelessWidget {
-  const ScaffoldBackground({Key? key, required this.scaffold}) : super(key: key);
+  const ScaffoldBackground({Key? key, required this.scaffold, this.height}) : super(key: key);
 
   final Widget scaffold;
+  final double? height;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +21,7 @@ class ScaffoldBackground extends StatelessWidget {
           child: ClipPath(
             clipper: ClippedBackground(),
             child: Container(
-              height: 450,
+              height: height ?? 450,
               width: double.maxFinite,
               decoration: BoxDecoration(
                 gradient: gradient1,
