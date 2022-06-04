@@ -1,7 +1,7 @@
 import 'package:covid_result_app/utils/colors.dart';
 import 'package:covid_result_app/views/login_view.dart';
 import 'package:covid_result_app/widgets/auth_views_widgets/auth_text_field.dart';
-import 'package:covid_result_app/widgets/display_toast.dart';
+import 'package:covid_result_app/methods/display_toast.dart';
 import 'package:covid_result_app/widgets/scaffold_background.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

@@ -9,7 +9,7 @@ import 'package:flutter/services.dart';
 
 import '../services/auth_services/auth_services.dart';
 import '../widgets/home_view_widgets/task_button.dart';
-import '../widgets/warning_dialog.dart';
+import '../methods/warning_dialog.dart';
 import 'login_view.dart';
 
 class HomeView extends StatefulWidget {

@@ -1,7 +1,7 @@
 import 'package:covid_result_app/views/register_view.dart';
 import 'package:covid_result_app/widgets/animated_text_widget.dart';
 import 'package:covid_result_app/widgets/auth_views_widgets/logo_and_title.dart';
-import 'package:covid_result_app/widgets/display_toast.dart';
+import 'package:covid_result_app/methods/display_toast.dart';
 import 'package:covid_result_app/widgets/scaffold_background.dart';
 import 'package:covid_result_app/widgets/submit_button_small.dart';
 import 'package:covid_result_app/widgets/text_widget_small.dart';
