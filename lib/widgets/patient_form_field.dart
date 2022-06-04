@@ -8,14 +8,14 @@ class PatientFormField extends StatelessWidget {
     this.hintText,
     this.suffixIcon,
     this.activeBorderColor = Colors.red,
-    this.isEnabled = true,
+    this.readOnly = false,
   }) : super(key: key);
   final String? text;
   final TextEditingController? editingController;
   final String? hintText;
   final Widget? suffixIcon;
   final Color activeBorderColor;
-  final bool isEnabled;
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
@@ -37,9 +37,9 @@ class PatientFormField extends StatelessWidget {
           ),
         if (text != null) const SizedBox(height: 5),
         TextFormField(
-          enabled: isEnabled,
+          readOnly: readOnly,
           controller: editingController,
-          style: TextStyle(color: Colors.grey.shade600),
+          style: TextStyle(color: Colors.grey.shade600, letterSpacing: 1),
           decoration: InputDecoration(
             contentPadding: const EdgeInsets.all(15),
             isDense: true,
@@ -49,12 +49,6 @@ class PatientFormField extends StatelessWidget {
               color: Colors.grey.withOpacity(0.4),
               fontSize: 15,
               letterSpacing: 1,
-            ),
-            disabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15),
-              borderSide: BorderSide(
-                color: Colors.grey.withOpacity(0.2),
-              ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(15),
