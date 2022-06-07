@@ -377,7 +377,7 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
       displayToast(message: 'Select a result please');
     } else {
       setState(() => isGeneratingLoading = true);
-      await Future.delayed(const Duration(seconds: 1));
+      await Future.delayed(const Duration(milliseconds: 600));
       setState(() {
         flag = false;
         isGeneratingLoading = false;
