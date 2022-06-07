@@ -82,7 +82,7 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
         child: Column(
           children: [
             Row(
@@ -106,14 +106,14 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
                 ),
               ],
             ),
-            const SizedBox(height: 15),
+            const SizedBox(height: 10),
             PatientFormField(
               editingController: idNumber,
               text: 'identification code',
               hintText: 'passport or kebele id',
               activeBorderColor: activeBorderColor!,
             ),
-            const SizedBox(height: 15),
+            const SizedBox(height: 10),
             Row(
               children: [
                 Expanded(
@@ -124,9 +124,14 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
                     readOnly: true,
                     activeBorderColor: activeBorderColor!,
                     suffixIcon: IconButton(
-                      onPressed: () => setState(() async {
-                        birthDate.text = await changeDate(context: context);
-                      }),
+                      onPressed: () async {
+                        var date = await changeDate(context: context);
+                        setState(() {
+                          if (date != null) {
+                            birthDate.text = date;
+                          }
+                        });
+                      },
                       icon: const Icon(
                         Icons.arrow_drop_down,
                         size: 26,
@@ -151,7 +156,7 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
                 ),
               ],
             ),
-            const SizedBox(height: 15),
+            const SizedBox(height: 10),
             PatientFormField(
               text: 'Nationality',
               suffixIcon: DropDownMenu(
@@ -163,7 +168,7 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
                 ),
               ),
             ),
-            const SizedBox(height: 15),
+            const SizedBox(height: 10),
             // result field
             PatientFormField(
               text: 'Result',
@@ -176,7 +181,7 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
                 ),
               ),
             ),
-            const SizedBox(height: 15),
+            const SizedBox(height: 10),
             PatientFormField(
               editingController: resultDate,
               text: 'Result taken date',
@@ -192,7 +197,7 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
                 ),
               ),
             ),
-            const SizedBox(height: 15),
+            const SizedBox(height: 10),
             SizedBox(
               height: 150,
               child: Row(

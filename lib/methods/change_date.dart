@@ -12,7 +12,5 @@ changeDate({required BuildContext context}) async {
   );
   if (selected != null && selected != now) {
     return "${selected.day} / ${selected.month} / ${selected.year}";
-  } else {
-    log('Somthing happend in Date Selectors');
   }
 }
