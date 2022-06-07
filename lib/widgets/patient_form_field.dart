@@ -9,6 +9,7 @@ class PatientFormField extends StatelessWidget {
     this.suffixIcon,
     this.activeBorderColor = Colors.red,
     this.readOnly = false,
+    this.errorMessage,
   }) : super(key: key);
   final String? text;
   final TextEditingController? editingController;
@@ -16,6 +17,7 @@ class PatientFormField extends StatelessWidget {
   final Widget? suffixIcon;
   final Color activeBorderColor;
   final bool readOnly;
+  final String? errorMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -41,10 +43,24 @@ class PatientFormField extends StatelessWidget {
           controller: editingController,
           style: TextStyle(color: Colors.grey.shade600, letterSpacing: 1),
           decoration: InputDecoration(
+            errorText: errorMessage,
+            errorMaxLines: 1,
             contentPadding: const EdgeInsets.all(15),
             isDense: true,
             hintText: hintText,
             suffixIcon: suffixIcon,
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15),
+              borderSide: BorderSide(
+                color: Colors.red.withOpacity(0.5),
+              ),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15),
+              borderSide: BorderSide(
+                color: Colors.red.withOpacity(0.5),
+              ),
+            ),
             hintStyle: TextStyle(
               color: Colors.grey.withOpacity(0.4),
               fontSize: 15,

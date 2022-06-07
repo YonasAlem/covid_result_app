@@ -1,5 +1,6 @@
 import 'package:covid_result_app/services/auth_services/auth_services.dart';
 import 'package:covid_result_app/services/auth_services/auth_user.dart';
+import 'package:covid_result_app/views/full_screen_qr_view.dart';
 import 'package:covid_result_app/views/home_view.dart';
 import 'package:covid_result_app/views/patient_register_view.dart';
 import 'package:covid_result_app/views/verify_view.dart';
@@ -63,6 +64,14 @@ class MyApp extends StatelessWidget {
             return PageTransition(
               child: const PatientRegisterView(),
               type: PageTransitionType.rightToLeft,
+              curve: Curves.easeIn,
+              settings: settings,
+            );
+          case FullScreenQRView.routeName:
+            return PageTransition(
+              child: const FullScreenQRView(),
+              type: PageTransitionType.fade,
+              duration: const Duration(milliseconds: 500),
               curve: Curves.easeIn,
               settings: settings,
             );

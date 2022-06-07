@@ -1,5 +1,4 @@
 import 'package:covid_result_app/methods/display_toast.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -10,6 +9,7 @@ import '../widgets/drop_down_menu.dart';
 import '../widgets/big_button.dart';
 import '../widgets/patient_form_field.dart';
 import '../widgets/small_button.dart';
+import 'full_screen_qr_view.dart';
 
 class PatientRegisterView extends StatefulWidget {
   static const String routeName = '/registerpatient/';
@@ -31,25 +31,29 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
 
   List<String> genderList = ['Male', 'Female'];
   String? selectedGender;
-
   List<String> resultList = ['Negative', 'Positive'];
   String? selectedResult;
-
   List<String> countryList = ['Ethiopia', 'Kenya', 'Sudan', 'Dubai', 'Others'];
   String? selectedCountry;
 
   bool flag = true;
-
   bool isGeneratingLoading = false;
+  String qrDataHolder = '';
 
-  String hasQrData = '';
+  Color? activeBorderColor;
 
   @override
   void initState() {
     birthDate.text = '${today.day} / ${today.month} / ${today.year}';
     resultDate.text = '${today.day} / ${today.month} / ${today.year}';
 
+    idNumber.addListener(() => setState(() => qrDataHolder = ''));
+
     super.initState();
+  }
+
+  void setActiveBorderColor() {
+    activeBorderColor = const Color(0x55628ec5);
   }
 
   @override
@@ -64,6 +68,7 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
 
   @override
   Widget build(BuildContext context) {
+    setActiveBorderColor();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF628ec5),
@@ -87,7 +92,7 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
                     editingController: firstName,
                     text: 'first name',
                     hintText: 'enter first name',
-                    activeBorderColor: const Color(0x55628ec5),
+                    activeBorderColor: activeBorderColor!,
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -96,7 +101,7 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
                     editingController: lastName,
                     text: 'last name',
                     hintText: 'enter last name',
-                    activeBorderColor: const Color(0x55628ec5),
+                    activeBorderColor: activeBorderColor!,
                   ),
                 ),
               ],
@@ -106,7 +111,7 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
               editingController: idNumber,
               text: 'identification code',
               hintText: 'passport or kebele id',
-              activeBorderColor: const Color(0x55628ec5),
+              activeBorderColor: activeBorderColor!,
             ),
             const SizedBox(height: 15),
             Row(
@@ -117,7 +122,7 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
                     editingController: birthDate,
                     text: 'Date of birth',
                     readOnly: true,
-                    activeBorderColor: const Color(0x55628ec5),
+                    activeBorderColor: activeBorderColor!,
                     suffixIcon: IconButton(
                       onPressed: () => setState(() async {
                         birthDate.text = await changeDate(context: context);
@@ -192,15 +197,20 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
               height: 150,
               child: Row(
                 children: [
-                  hasQrData.isNotEmpty
-                      ? SizedBox(
-                          height: 150,
-                          width: 150,
-                          child: PrettyQr(
-                            size: 150,
-                            data: hasQrData,
-                            roundEdges: true,
-                            errorCorrectLevel: QrErrorCorrectLevel.M,
+                  qrDataHolder.isNotEmpty
+                      ? InkWell(
+                          onTap: () => Navigator.of(context).pushNamed(
+                            FullScreenQRView.routeName,
+                            arguments: qrDataHolder,
+                          ),
+                          child: Hero(
+                            tag: 'qr',
+                            child: PrettyQr(
+                              size: 150,
+                              data: qrDataHolder,
+                              roundEdges: true,
+                              errorCorrectLevel: QrErrorCorrectLevel.M,
+                            ),
                           ),
                         )
                       : Container(
@@ -238,25 +248,64 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
                           duration: const Duration(milliseconds: 500),
                           child: flag
                               ? BigButton(
-                                  onPressed: () async {
-                                    setState(() {
-                                      isGeneratingLoading = true;
-                                    });
-                                    await Future.delayed(const Duration(seconds: 1));
-                                    setState(() {
-                                      flag = false;
-                                      isGeneratingLoading = false;
-                                      hasQrData = 'hello';
-                                    });
-                                  },
-                                  text: qrGenerateButton(),
+                                  onPressed: _qrGenerateButtonAction,
+                                  text: isGeneratingLoading
+                                      ? Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: const [
+                                            SpinKitCircle(
+                                              color: Colors.white,
+                                              size: 30,
+                                            ),
+                                            SizedBox(width: 10),
+                                            Text(
+                                              'Generating',
+                                              style: TextStyle(letterSpacing: 1, fontSize: 14),
+                                            ),
+                                          ],
+                                        )
+                                      : const Text(
+                                          'Generate QR',
+                                          style: TextStyle(fontSize: 16, letterSpacing: 1),
+                                        ),
                                   buttonColor: Colors.orange,
                                 )
-                              : saveAndShareButtons(),
+                              : Row(
+                                  key: const Key('2'),
+                                  children: [
+                                    Expanded(
+                                      child: Hero(
+                                        tag: 'b1',
+                                        child: SmallButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              flag = true;
+                                            });
+                                          },
+                                          iconData: Icons.save,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: Hero(
+                                        tag: 'b2',
+                                        child: SmallButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              flag = true;
+                                            });
+                                          },
+                                          iconData: Icons.share,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                         ),
                         const SizedBox(height: 15),
                         const Text(
-                          'make sure you shared it before saving it to the server.',
+                          'Make sure you shared it before saving it to the server.',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 12,
@@ -284,7 +333,7 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
     );
   }
 
-  Future<void> registerPatientData() async {
+  Future<void> _qrGenerateButtonAction() async {
     if (firstName.text.isEmpty || lastName.text.isEmpty) {
       displayToast(message: "First or last name can't be empty.");
     } else if (idNumber.text.isEmpty ||
@@ -295,69 +344,28 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
       } else if (idNumber.text.length < 4) {
         displayToast(message: "Id number can't hold less than 4 numbers.");
       } else {
-        displayToast(message: "Id number can't hold Strings or doubles. Try using numbers");
+        displayToast(message: "Id number can't hold Strings or doubles, Try using numbers");
       }
     } else if (selectedGender == null) {
-      displayToast(
-        message: 'Select a gender please',
-      );
+      displayToast(message: 'Select a gender please');
     } else if (selectedCountry == null) {
       displayToast(message: 'Select a country please');
     } else if (selectedResult == null) {
       displayToast(message: 'Select a result please');
-    } else if (hasQrData.isEmpty) {
-      displayToast(message: 'Generate qr code please');
+    } else {
+      setState(() => isGeneratingLoading = true);
+      await Future.delayed(const Duration(seconds: 1));
+      setState(() {
+        flag = false;
+        isGeneratingLoading = false;
+        qrDataHolder = 'hello';
+      });
     }
   }
 
-  qrGenerateButton() {
-    return isGeneratingLoading
-        ? Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              SpinKitCircle(
-                color: Colors.white,
-                size: 30,
-              ),
-              SizedBox(width: 10),
-              Text(
-                'Generating',
-                style: TextStyle(letterSpacing: 1, fontSize: 14),
-              ),
-            ],
-          )
-        : const Text(
-            'Generate QR',
-            style: TextStyle(fontSize: 16, letterSpacing: 1),
-          );
-  }
-
-  Row saveAndShareButtons() {
-    return Row(
-      key: const Key('2'),
-      children: [
-        Expanded(
-          child: SmallButton(
-            onPressed: () {
-              setState(() {
-                flag = true;
-              });
-            },
-            iconData: Icons.save,
-          ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: SmallButton(
-            onPressed: () {
-              setState(() {
-                flag = true;
-              });
-            },
-            iconData: Icons.share,
-          ),
-        ),
-      ],
-    );
+  Future<void> registerPatientData() async {
+    if (qrDataHolder.isEmpty) {
+      displayToast(message: 'Generate qr code first please');
+    } else {}
   }
 }
