@@ -5,6 +5,7 @@ import 'package:covid_result_app/views/home_view.dart';
 import 'package:covid_result_app/views/patient_register_view.dart';
 import 'package:covid_result_app/views/verify_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'Regular',
       ),
+      builder: EasyLoading.init(),
       home: const FirstScreenHandler(),
       onGenerateRoute: (RouteSettings settings) {
         switch (settings.name) {

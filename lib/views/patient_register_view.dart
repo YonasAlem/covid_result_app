@@ -1,10 +1,15 @@
+import 'dart:io';
+
 import 'package:covid_result_app/methods/display_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 
+import '../db/database_manager.dart';
 import '../methods/change_date.dart';
+import '../models/patient_model.dart';
 import '../widgets/drop_down_menu.dart';
 import '../widgets/big_button.dart';
 import '../widgets/patient_form_field.dart';
@@ -41,6 +46,8 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
   String qrDataHolder = '';
 
   Color? activeBorderColor;
+
+  bool easyLoading = false;
 
   @override
   void initState() {
@@ -363,14 +370,46 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
       setState(() {
         flag = false;
         isGeneratingLoading = false;
-        qrDataHolder = 'hello';
+        qrDataHolder =
+            'https://covid-result-tester.herokuapp.com/test-result-using-qr-code/${idNumber.text}';
       });
     }
   }
 
   Future<void> registerPatientData() async {
+    EasyLoadingStyle.custom;
     if (qrDataHolder.isEmpty) {
       displayToast(message: 'Generate qr code first please');
-    } else {}
+    } else {
+      final PatientModel patientData = PatientModel(
+        fullName: '${firstName.text.trim()} ${lastName.text.trim()}',
+        passportNumber: idNumber.text.trim(),
+        dateOfBirth: birthDate.text,
+        gender: selectedGender!,
+        nationality: selectedCountry!,
+        result: selectedResult!,
+        resultTakenDate: resultDate.text,
+      );
+
+      try {
+        final result = await InternetAddress.lookup('google.com');
+        if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+          await EasyLoading.show(status: 'Saving patient data');
+          OperationStatus newResult = await DatabaseManager.addNewPatient(
+            patient: patientData,
+          );
+          if (newResult == OperationStatus.succeed) {
+            await EasyLoading.showSuccess('Data saved successfully.');
+          } else {
+            EasyLoading.showError('There is a problem, please try again!');
+          }
+        }
+      } on SocketException catch (_) {
+        displayToast(
+          message: 'No internet connection found!',
+          color: Colors.red[300],
+        );
+      }
+    }
   }
 }

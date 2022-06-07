@@ -44,6 +44,9 @@ dependencies:
   fluttertoast: ^8.0.9
   dropdown_button2: ^1.5.2
   pretty_qr_code: ^2.0.2
+  http: ^0.13.4
+  flutter_easyloading: ^3.0.5
+  connectivity_plus: ^2.3.2
 
 dev_dependencies:
   flutter_test:
