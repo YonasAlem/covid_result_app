@@ -21,6 +21,7 @@ import '../models/patient_model.dart';
 import '../widgets/drop_down_menu.dart';
 import '../widgets/big_button.dart';
 import '../widgets/patient_form_field.dart';
+import '../widgets/qr_generated_image.dart';
 import '../widgets/small_button.dart';
 import 'full_screen_qr_view.dart';
 
@@ -144,9 +145,7 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
                       onPressed: () async {
                         var date = await changeDate(context: context);
                         setState(() {
-                          if (date != null) {
-                            birthDate.text = date;
-                          }
+                          if (date != null) birthDate.text = date;
                         });
                       },
                       icon: const Icon(
@@ -205,9 +204,12 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
               activeBorderColor: const Color(0x55628ec5),
               readOnly: true,
               suffixIcon: IconButton(
-                onPressed: () => setState(() async {
-                  resultDate.text = await changeDate(context: context);
-                }),
+                onPressed: () async {
+                  final date = await changeDate(context: context);
+                  setState(() async {
+                    if (date != null) resultDate.text = date;
+                  });
+                },
                 icon: const Icon(
                   Icons.arrow_drop_down,
                   size: 26,
@@ -220,54 +222,12 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
               child: Row(
                 children: [
                   qrDataHolder.isNotEmpty
-                      ? InkWell(
-                          onTap: () => Navigator.of(context).pushNamed(
-                            FullScreenQRView.routeName,
-                            arguments: [
-                              qrDataHolder,
-                              "${firstName.text} ${lastName.text}",
-                            ],
-                          ),
-                          child: Hero(
-                            tag: 'qr',
-                            child: Column(
-                              children: [
-                                PrettyQr(
-                                  size: 150,
-                                  data: qrDataHolder,
-                                  roundEdges: true,
-                                  errorCorrectLevel: QrErrorCorrectLevel.M,
-                                ),
-                              ],
-                            ),
-                          ),
+                      ? QrImageContainer(
+                          qrDataHolder: qrDataHolder,
+                          firstName: firstName.text,
+                          lastName: lastName.text,
                         )
-                      : Container(
-                          height: 150,
-                          width: 150,
-                          decoration: BoxDecoration(
-                            color: Colors.grey.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.qr_code,
-                                color: Colors.grey.withOpacity(0.5),
-                                size: 50,
-                              ),
-                              const SizedBox(height: 8),
-                              const Text(
-                                'Generating...',
-                                style: TextStyle(
-                                  letterSpacing: 1,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                      : const EmptyQrImageContainer(),
                   const SizedBox(width: 20),
                   Expanded(
                     child: Column(
@@ -275,138 +235,7 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
                       children: [
                         AnimatedSwitcher(
                           duration: const Duration(milliseconds: 500),
-                          child: flag
-                              ? BigButton(
-                                  onPressed: _qrGenerateButtonAction,
-                                  text: isGeneratingLoading
-                                      ? Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: const [
-                                            SpinKitCircle(
-                                              color: Colors.white,
-                                              size: 30,
-                                            ),
-                                            SizedBox(width: 10),
-                                            Text(
-                                              'Generating',
-                                              style: TextStyle(letterSpacing: 1, fontSize: 14),
-                                            ),
-                                          ],
-                                        )
-                                      : const Text(
-                                          'Generate QR',
-                                          style: TextStyle(fontSize: 16, letterSpacing: 1),
-                                        ),
-                                  buttonColor: Colors.orange,
-                                )
-                              : Row(
-                                  key: const Key('2'),
-                                  children: [
-                                    Expanded(
-                                      child: Hero(
-                                        tag: 'b1',
-                                        child: SmallButton(
-                                          onPressed: () async {
-                                            final image =
-                                                await screenshotController.captureFromWidget(
-                                              Container(
-                                                color: Colors.white,
-                                                padding: EdgeInsets.all(30),
-                                                child: Column(
-                                                  mainAxisSize: MainAxisSize.min,
-                                                  children: [
-                                                    PrettyQr(
-                                                      size: 150,
-                                                      data: qrDataHolder,
-                                                      roundEdges: true,
-                                                      errorCorrectLevel: QrErrorCorrectLevel.M,
-                                                    ),
-                                                    SizedBox(
-                                                      height: 15,
-                                                    ),
-                                                    const Text(
-                                                      'FULL NAME:',
-                                                      style: TextStyle(
-                                                        color: Colors.grey,
-                                                        letterSpacing: 1,
-                                                        fontSize: 12,
-                                                        decoration: TextDecoration.underline,
-                                                      ),
-                                                    ),
-                                                    Text(
-                                                      '${firstName.text.trim().toUpperCase()} ${lastName.text.trim().toUpperCase()}',
-                                                      style: TextStyle(
-                                                        fontSize: 16,
-                                                        letterSpacing: 1,
-                                                        color: textColor,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            );
-
-                                            if (image.isEmpty) return;
-
-                                            await saveImageToGallery(image);
-                                          },
-                                          iconData: Icons.save,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Expanded(
-                                      child: Hero(
-                                        tag: 'b2',
-                                        child: SmallButton(
-                                          onPressed: () async {
-                                            final image =
-                                                await screenshotController.captureFromWidget(
-                                              Container(
-                                                color: Colors.white,
-                                                padding: EdgeInsets.all(30),
-                                                child: Column(
-                                                  mainAxisSize: MainAxisSize.min,
-                                                  children: [
-                                                    PrettyQr(
-                                                      size: 150,
-                                                      data: qrDataHolder,
-                                                      roundEdges: true,
-                                                      errorCorrectLevel: QrErrorCorrectLevel.M,
-                                                    ),
-                                                    SizedBox(
-                                                      height: 15,
-                                                    ),
-                                                    const Text(
-                                                      'FULL NAME:',
-                                                      style: TextStyle(
-                                                        color: Colors.grey,
-                                                        letterSpacing: 1,
-                                                        fontSize: 12,
-                                                        decoration: TextDecoration.underline,
-                                                      ),
-                                                    ),
-                                                    Text(
-                                                      '${firstName.text.trim().toUpperCase()} ${lastName.text.trim().toUpperCase()}',
-                                                      style: TextStyle(
-                                                        fontSize: 16,
-                                                        letterSpacing: 1,
-                                                        color: textColor,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            );
-
-                                            await saveAndShare(image);
-                                          },
-                                          iconData: Icons.share,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                          child: flag ? generateQrButton() : saveAndShareButtons(),
                         ),
                         const SizedBox(height: 15),
                         const Hero(
@@ -444,14 +273,81 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
     );
   }
 
-  saveAndShare(Uint8List bytes) async {
-    final dir = await getApplicationDocumentsDirectory();
-    final image = File("${dir.path}/flutter.png");
-    image.writeAsBytesSync(bytes);
-    await Share.shareFiles([image.path]);
+  BigButton generateQrButton() {
+    return BigButton(
+      onPressed: _qrGenerateButtonAction,
+      text: isGeneratingLoading
+          ? Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                SpinKitCircle(
+                  color: Colors.white,
+                  size: 30,
+                ),
+                SizedBox(width: 10),
+                Text(
+                  'Generating',
+                  style: TextStyle(letterSpacing: 1, fontSize: 14),
+                ),
+              ],
+            )
+          : const Text(
+              'Generate QR',
+              style: TextStyle(fontSize: 16, letterSpacing: 1),
+            ),
+      buttonColor: Colors.orange,
+    );
   }
 
-  saveImageToGallery(Uint8List image) async {
+  Row saveAndShareButtons() {
+    return Row(
+      key: const Key('2'),
+      children: [
+        Expanded(
+          child: Hero(
+            tag: 'b1',
+            child: SmallButton(
+              onPressed: saveImageToGallery,
+              iconData: Icons.save,
+            ),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Hero(
+            tag: 'b2',
+            child: SmallButton(
+              onPressed: saveAndShare,
+              iconData: Icons.share,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> saveAndShare() async {
+    final image = await screenshotController.captureFromWidget(
+      QrGeneratedImage(
+        qrDataHolder: qrDataHolder,
+        firstName: firstName,
+        lastName: lastName,
+      ),
+    );
+    final dir = await getApplicationDocumentsDirectory();
+    final imageDir = File("${dir.path}/flutter.png");
+    imageDir.writeAsBytesSync(image);
+    await Share.shareFiles([imageDir.path]);
+  }
+
+  Future<void> saveImageToGallery() async {
+    final image = await screenshotController.captureFromWidget(
+      QrGeneratedImage(
+        qrDataHolder: qrDataHolder,
+        firstName: firstName,
+        lastName: lastName,
+      ),
+    );
     await [Permission.storage].request();
 
     final timeStamp = today.toIso8601String().replaceAll('.', '-').replaceAll(':', '-');
@@ -524,5 +420,78 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
         );
       }
     }
+  }
+}
+
+class QrImageContainer extends StatelessWidget {
+  const QrImageContainer({
+    Key? key,
+    required this.qrDataHolder,
+    required this.firstName,
+    required this.lastName,
+  }) : super(key: key);
+
+  final String qrDataHolder;
+  final String firstName;
+  final String lastName;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () => Navigator.of(context).pushNamed(
+        FullScreenQRView.routeName,
+        arguments: [
+          qrDataHolder,
+          "$firstName $lastName",
+        ],
+      ),
+      child: Hero(
+        tag: 'qr',
+        child: Column(
+          children: [
+            PrettyQr(
+              size: 150,
+              data: qrDataHolder,
+              roundEdges: true,
+              errorCorrectLevel: QrErrorCorrectLevel.M,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class EmptyQrImageContainer extends StatelessWidget {
+  const EmptyQrImageContainer({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 150,
+      width: 150,
+      decoration: BoxDecoration(
+        color: Colors.grey.withOpacity(0.15),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.qr_code,
+            color: Colors.grey.withOpacity(0.5),
+            size: 50,
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Generating...',
+            style: TextStyle(
+              letterSpacing: 1,
+              color: Colors.grey,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
