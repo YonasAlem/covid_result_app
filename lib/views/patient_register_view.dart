@@ -2,17 +2,20 @@ import 'dart:io';
 
 import 'dart:typed_data';
 import 'package:covid_result_app/methods/display_toast.dart';
+import 'package:covid_result_app/services/db_services/database_services.dart';
 import 'package:covid_result_app/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:screenshot/screenshot.dart';
+import 'package:share_plus/share_plus.dart';
 
-import '../db/database_manager.dart';
+import '../enums/operation_status.dart';
 import '../methods/change_date.dart';
 import '../models/patient_model.dart';
 import '../widgets/drop_down_menu.dart';
@@ -356,7 +359,48 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
                                       child: Hero(
                                         tag: 'b2',
                                         child: SmallButton(
-                                          onPressed: () {},
+                                          onPressed: () async {
+                                            final image =
+                                                await screenshotController.captureFromWidget(
+                                              Container(
+                                                color: Colors.white,
+                                                padding: EdgeInsets.all(30),
+                                                child: Column(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    PrettyQr(
+                                                      size: 150,
+                                                      data: qrDataHolder,
+                                                      roundEdges: true,
+                                                      errorCorrectLevel: QrErrorCorrectLevel.M,
+                                                    ),
+                                                    SizedBox(
+                                                      height: 15,
+                                                    ),
+                                                    const Text(
+                                                      'FULL NAME:',
+                                                      style: TextStyle(
+                                                        color: Colors.grey,
+                                                        letterSpacing: 1,
+                                                        fontSize: 12,
+                                                        decoration: TextDecoration.underline,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      '${firstName.text.trim().toUpperCase()} ${lastName.text.trim().toUpperCase()}',
+                                                      style: TextStyle(
+                                                        fontSize: 16,
+                                                        letterSpacing: 1,
+                                                        color: textColor,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+
+                                            await saveAndShare(image);
+                                          },
                                           iconData: Icons.share,
                                         ),
                                       ),
@@ -398,6 +442,13 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
         ),
       ),
     );
+  }
+
+  saveAndShare(Uint8List bytes) async {
+    final dir = await getApplicationDocumentsDirectory();
+    final image = File("${dir.path}/flutter.png");
+    image.writeAsBytesSync(bytes);
+    await Share.shareFiles([image.path]);
   }
 
   saveImageToGallery(Uint8List image) async {
@@ -445,22 +496,20 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
     if (qrDataHolder.isEmpty) {
       displayToast(message: 'Generate qr code first please');
     } else {
-      final PatientModel patientData = PatientModel(
-        fullName: '${firstName.text.trim()} ${lastName.text.trim()}',
-        passportNumber: idNumber.text.trim(),
-        dateOfBirth: birthDate.text,
-        gender: selectedGender!,
-        nationality: selectedCountry!,
-        result: selectedResult!,
-        resultTakenDate: resultDate.text,
-      );
-
       try {
         final result = await InternetAddress.lookup('google.com');
         if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
           await EasyLoading.show(status: 'Saving patient data');
-          OperationStatus newResult = await DatabaseManager.addNewPatient(
-            patient: patientData,
+          OperationStatus newResult = await DatabaseServices.mongoDb().registerPatient(
+            patientModel: PatientModel(
+              fullName: '${firstName.text.trim()} ${lastName.text.trim()}',
+              passportNumber: idNumber.text.trim(),
+              dateOfBirth: birthDate.text,
+              gender: selectedGender!,
+              nationality: selectedCountry!,
+              result: selectedResult!,
+              resultTakenDate: resultDate.text,
+            ),
           );
           if (newResult == OperationStatus.succeed) {
             await EasyLoading.showSuccess('Data saved successfully.');
