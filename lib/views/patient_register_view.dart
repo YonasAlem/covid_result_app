@@ -1,11 +1,16 @@
 import 'dart:io';
 
+import 'dart:typed_data';
 import 'package:covid_result_app/methods/display_toast.dart';
+import 'package:covid_result_app/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
+import 'package:screenshot/screenshot.dart';
 
 import '../db/database_manager.dart';
 import '../methods/change_date.dart';
@@ -31,6 +36,8 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
   final TextEditingController idNumber = TextEditingController();
   final TextEditingController birthDate = TextEditingController();
   final TextEditingController resultDate = TextEditingController();
+
+  final ScreenshotController screenshotController = ScreenshotController();
 
   DateTime today = DateTime.now();
 
@@ -213,15 +220,22 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
                       ? InkWell(
                           onTap: () => Navigator.of(context).pushNamed(
                             FullScreenQRView.routeName,
-                            arguments: qrDataHolder,
+                            arguments: [
+                              qrDataHolder,
+                              "${firstName.text} ${lastName.text}",
+                            ],
                           ),
                           child: Hero(
                             tag: 'qr',
-                            child: PrettyQr(
-                              size: 150,
-                              data: qrDataHolder,
-                              roundEdges: true,
-                              errorCorrectLevel: QrErrorCorrectLevel.M,
+                            child: Column(
+                              children: [
+                                PrettyQr(
+                                  size: 150,
+                                  data: qrDataHolder,
+                                  roundEdges: true,
+                                  errorCorrectLevel: QrErrorCorrectLevel.M,
+                                ),
+                              ],
                             ),
                           ),
                         )
@@ -289,10 +303,49 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
                                       child: Hero(
                                         tag: 'b1',
                                         child: SmallButton(
-                                          onPressed: () {
-                                            setState(() {
-                                              flag = true;
-                                            });
+                                          onPressed: () async {
+                                            final image =
+                                                await screenshotController.captureFromWidget(
+                                              Container(
+                                                color: Colors.white,
+                                                padding: EdgeInsets.all(30),
+                                                child: Column(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    PrettyQr(
+                                                      size: 150,
+                                                      data: qrDataHolder,
+                                                      roundEdges: true,
+                                                      errorCorrectLevel: QrErrorCorrectLevel.M,
+                                                    ),
+                                                    SizedBox(
+                                                      height: 15,
+                                                    ),
+                                                    const Text(
+                                                      'FULL NAME:',
+                                                      style: TextStyle(
+                                                        color: Colors.grey,
+                                                        letterSpacing: 1,
+                                                        fontSize: 12,
+                                                        decoration: TextDecoration.underline,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      '${firstName.text.trim().toUpperCase()} ${lastName.text.trim().toUpperCase()}',
+                                                      style: TextStyle(
+                                                        fontSize: 16,
+                                                        letterSpacing: 1,
+                                                        color: textColor,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+
+                                            if (image.isEmpty) return;
+
+                                            await saveImageToGallery(image);
                                           },
                                           iconData: Icons.save,
                                         ),
@@ -303,11 +356,7 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
                                       child: Hero(
                                         tag: 'b2',
                                         child: SmallButton(
-                                          onPressed: () {
-                                            setState(() {
-                                              flag = true;
-                                            });
-                                          },
+                                          onPressed: () {},
                                           iconData: Icons.share,
                                         ),
                                       ),
@@ -316,21 +365,27 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
                                 ),
                         ),
                         const SizedBox(height: 15),
-                        const Text(
-                          'Make sure you shared it before saving it to the server.',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey,
+                        const Hero(
+                          tag: 'warn',
+                          child: Text(
+                            'Make sure you shared it before saving it to the server.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 5),
-                        BigButton(
-                          onPressed: registerPatientData,
-                          buttonColor: const Color(0xFF628ec5),
-                          text: const Text(
-                            'Save',
-                            style: TextStyle(fontSize: 16, letterSpacing: 1),
+                        Hero(
+                          tag: 'bigButton',
+                          child: BigButton(
+                            onPressed: registerPatientData,
+                            buttonColor: const Color(0xFF628ec5),
+                            text: const Text(
+                              'Save',
+                              style: TextStyle(fontSize: 16, letterSpacing: 1),
+                            ),
                           ),
                         ),
                       ],
@@ -343,6 +398,15 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
         ),
       ),
     );
+  }
+
+  saveImageToGallery(Uint8List image) async {
+    await [Permission.storage].request();
+
+    final timeStamp = today.toIso8601String().replaceAll('.', '-').replaceAll(':', '-');
+    final imageName = 'screenshot_$timeStamp';
+    final result = await ImageGallerySaver.saveImage(image, name: imageName);
+    return result[''];
   }
 
   Future<void> _qrGenerateButtonAction() async {

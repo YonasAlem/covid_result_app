@@ -47,6 +47,10 @@ dependencies:
   http: ^0.13.4
   flutter_easyloading: ^3.0.5
   connectivity_plus: ^2.3.2
+  path_provider: ^2.0.11
+  screenshot: ^1.2.3
+  image_gallery_saver: ^1.7.1
+  permission_handler: ^9.2.0
 
 dev_dependencies:
   flutter_test:
