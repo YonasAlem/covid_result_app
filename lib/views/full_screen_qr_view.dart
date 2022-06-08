@@ -41,7 +41,7 @@ class FullScreenQRView extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: 15),
+                const SizedBox(height: 15),
                 Text(
                   args[1].toString().toUpperCase(),
                   style: const TextStyle(
@@ -92,25 +92,25 @@ class FullScreenQRView extends StatelessWidget {
   Row saveAndShareButtons() {
     return Row(
       children: [
-        Expanded(
-          child: Hero(
-            tag: 'b1',
-            child: SmallButton(
-              onPressed: () {},
-              iconData: Icons.save,
-            ),
-          ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Hero(
-            tag: 'b2',
-            child: SmallButton(
-              onPressed: () {},
-              iconData: Icons.share,
-            ),
-          ),
-        ),
+        // Expanded(
+        //   child: Hero(
+        //     tag: 'b1',
+        //     child: SmallButton(
+        //       onPressed: () {},
+        //       icon: Icons.save,
+        //     ),
+        //   ),
+        // ),
+        // const SizedBox(width: 10),
+        // Expanded(
+        //   child: Hero(
+        //     tag: 'b2',
+        //     child: SmallButton(
+        //       onPressed: () {},
+        //       iconData: Icons.share,
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }

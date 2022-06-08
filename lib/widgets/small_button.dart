@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 class SmallButton extends StatelessWidget {
-  const SmallButton({Key? key, this.onPressed, required this.iconData}) : super(key: key);
+  const SmallButton({Key? key, this.onPressed, required this.icon}) : super(key: key);
 
   final Function()? onPressed;
-  final IconData iconData;
+  final Widget icon;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,7 @@ class SmallButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(15),
           ),
         ),
-        child: Icon(iconData),
+        child: icon,
       ),
     );
   }

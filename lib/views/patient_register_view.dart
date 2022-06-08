@@ -1,9 +1,9 @@
 import 'dart:io';
-
-import 'dart:typed_data';
+import 'package:covid_result_app/enums/loading_type.dart';
 import 'package:covid_result_app/methods/display_toast.dart';
 import 'package:covid_result_app/services/db_services/database_services.dart';
-import 'package:covid_result_app/utils/colors.dart';
+
+import 'package:covid_result_app/widgets/qr_image_container_empty.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -11,7 +11,6 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -22,8 +21,8 @@ import '../widgets/drop_down_menu.dart';
 import '../widgets/big_button.dart';
 import '../widgets/patient_form_field.dart';
 import '../widgets/qr_generated_image.dart';
+import '../widgets/qr_image_container.dart';
 import '../widgets/small_button.dart';
-import 'full_screen_qr_view.dart';
 
 class PatientRegisterView extends StatefulWidget {
   static const String routeName = '/registerpatient/';
@@ -53,12 +52,10 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
   String? selectedCountry;
 
   bool flag = true;
-  bool isGeneratingLoading = false;
   String qrDataHolder = '';
-
   Color? activeBorderColor;
-
   bool easyLoading = false;
+  Enum? loadingType;
 
   @override
   void initState() {
@@ -221,13 +218,13 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
               height: 150,
               child: Row(
                 children: [
-                  qrDataHolder.isNotEmpty
-                      ? QrImageContainer(
+                  qrDataHolder.isEmpty
+                      ? const QrImageContainerEmpty()
+                      : QrImageContainerFull(
                           qrDataHolder: qrDataHolder,
                           firstName: firstName.text,
                           lastName: lastName.text,
-                        )
-                      : const EmptyQrImageContainer(),
+                        ),
                   const SizedBox(width: 20),
                   Expanded(
                     child: Column(
@@ -235,7 +232,7 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
                       children: [
                         AnimatedSwitcher(
                           duration: const Duration(milliseconds: 500),
-                          child: flag ? generateQrButton() : saveAndShareButtons(),
+                          child: flag ? qrGenerateButton() : saveAndShareButtons(),
                         ),
                         const SizedBox(height: 15),
                         const Hero(
@@ -273,24 +270,11 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
     );
   }
 
-  BigButton generateQrButton() {
+  BigButton qrGenerateButton() {
     return BigButton(
       onPressed: _qrGenerateButtonAction,
-      text: isGeneratingLoading
-          ? Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                SpinKitCircle(
-                  color: Colors.white,
-                  size: 30,
-                ),
-                SizedBox(width: 10),
-                Text(
-                  'Generating',
-                  style: TextStyle(letterSpacing: 1, fontSize: 14),
-                ),
-              ],
-            )
+      text: loadingType == LoadingType.qrGenerateButton
+          ? const QrGenerateButtonLoading()
           : const Text(
               'Generate QR',
               style: TextStyle(fontSize: 16, letterSpacing: 1),
@@ -308,7 +292,9 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
             tag: 'b1',
             child: SmallButton(
               onPressed: saveImageToGallery,
-              iconData: Icons.save,
+              icon: loadingType == LoadingType.saveFileButton
+                  ? const SpinKitCircle(color: Colors.white, size: 30)
+                  : const Icon(Icons.save),
             ),
           ),
         ),
@@ -317,8 +303,10 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
           child: Hero(
             tag: 'b2',
             child: SmallButton(
-              onPressed: saveAndShare,
-              iconData: Icons.share,
+              onPressed: shareImageToOthers,
+              icon: loadingType == LoadingType.shareButton
+                  ? const SpinKitCircle(color: Colors.white, size: 30)
+                  : const Icon(Icons.share),
             ),
           ),
         ),
@@ -326,7 +314,10 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
     );
   }
 
-  Future<void> saveAndShare() async {
+  Future<void> shareImageToOthers() async {
+    // turn on loading widget
+    setState(() => loadingType = LoadingType.shareButton);
+    // capture widget as image
     final image = await screenshotController.captureFromWidget(
       QrGeneratedImage(
         qrDataHolder: qrDataHolder,
@@ -334,13 +325,22 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
         lastName: lastName,
       ),
     );
+    // turn off loading widget
+    setState(() => loadingType = null);
+    // get phone's system directory
     final dir = await getApplicationDocumentsDirectory();
+    // create a file in system directory
     final imageDir = File("${dir.path}/flutter.png");
+    // copy the captured widget to the file that have been created before
     imageDir.writeAsBytesSync(image);
+    // share the file to other platforms
     await Share.shareFiles([imageDir.path]);
   }
 
   Future<void> saveImageToGallery() async {
+    // turn on loading widget
+    setState(() => loadingType = LoadingType.saveFileButton);
+    // capture widget as image
     final image = await screenshotController.captureFromWidget(
       QrGeneratedImage(
         qrDataHolder: qrDataHolder,
@@ -348,12 +348,15 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
         lastName: lastName,
       ),
     );
+    // turn off loading widget
+    setState(() => loadingType = null);
+    // request a permission for the storage
     await [Permission.storage].request();
-
+    // create a timestamp for image file name
     final timeStamp = today.toIso8601String().replaceAll('.', '-').replaceAll(':', '-');
     final imageName = 'screenshot_$timeStamp';
-    final result = await ImageGallerySaver.saveImage(image, name: imageName);
-    return result[''];
+    // save the file to the gallery
+    await ImageGallerySaver.saveImage(image, name: imageName);
   }
 
   Future<void> _qrGenerateButtonAction() async {
@@ -376,11 +379,11 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
     } else if (selectedResult == null) {
       displayToast(message: 'Select a result please');
     } else {
-      setState(() => isGeneratingLoading = true);
+      setState(() => loadingType = LoadingType.qrGenerateButton);
       await Future.delayed(const Duration(milliseconds: 600));
       setState(() {
         flag = false;
-        isGeneratingLoading = false;
+        loadingType = null;
         qrDataHolder =
             'https://covid-result-tester.herokuapp.com/test-result-using-qr-code/${idNumber.text}';
       });
@@ -410,7 +413,7 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
           if (newResult == OperationStatus.succeed) {
             await EasyLoading.showSuccess('Data saved successfully.');
           } else {
-            EasyLoading.showError('There is a problem, please try again!');
+            await EasyLoading.showError('There is a problem, please try again!');
           }
         }
       } on SocketException catch (_) {
@@ -423,75 +426,26 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
   }
 }
 
-class QrImageContainer extends StatelessWidget {
-  const QrImageContainer({
+class QrGenerateButtonLoading extends StatelessWidget {
+  const QrGenerateButtonLoading({
     Key? key,
-    required this.qrDataHolder,
-    required this.firstName,
-    required this.lastName,
   }) : super(key: key);
 
-  final String qrDataHolder;
-  final String firstName;
-  final String lastName;
-
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () => Navigator.of(context).pushNamed(
-        FullScreenQRView.routeName,
-        arguments: [
-          qrDataHolder,
-          "$firstName $lastName",
-        ],
-      ),
-      child: Hero(
-        tag: 'qr',
-        child: Column(
-          children: [
-            PrettyQr(
-              size: 150,
-              data: qrDataHolder,
-              roundEdges: true,
-              errorCorrectLevel: QrErrorCorrectLevel.M,
-            ),
-          ],
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: const [
+        SpinKitCircle(
+          color: Colors.white,
+          size: 30,
         ),
-      ),
-    );
-  }
-}
-
-class EmptyQrImageContainer extends StatelessWidget {
-  const EmptyQrImageContainer({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 150,
-      width: 150,
-      decoration: BoxDecoration(
-        color: Colors.grey.withOpacity(0.15),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.qr_code,
-            color: Colors.grey.withOpacity(0.5),
-            size: 50,
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'Generating...',
-            style: TextStyle(
-              letterSpacing: 1,
-              color: Colors.grey,
-            ),
-          ),
-        ],
-      ),
+        SizedBox(width: 10),
+        Text(
+          'Generating',
+          style: TextStyle(letterSpacing: 1, fontSize: 14),
+        ),
+      ],
     );
   }
 }
