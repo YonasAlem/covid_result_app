@@ -3,6 +3,7 @@ import 'package:covid_result_app/enums/hero_tags.dart';
 import 'package:covid_result_app/enums/loading_type.dart';
 import 'package:covid_result_app/methods/display_toast.dart';
 import 'package:covid_result_app/methods/share_image_to_others.dart';
+import 'package:covid_result_app/methods/warning_dialog.dart';
 import 'package:covid_result_app/services/db_services/database_services.dart';
 
 import 'package:covid_result_app/widgets/qr_image_container_empty.dart';
@@ -290,16 +291,25 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
             tag: HeroTags.saveFileButton,
             child: SmallButton(
               onPressed: () async {
-                changeLoadingState(LoadingType.saveFileButton);
-                await saveImageToGallery(
-                  qrDataHolder: qrDataHolder,
-                  firstName: firstName.text,
-                  lastName: lastName.text,
+                var shouldSave = await warningDialog(
+                  context: context,
+                  boxTitle: "Saving image",
+                  boxDescription: "This will save the qr image to the gallery",
+                  cancleText: "Don't",
+                  okText: "Save",
                 );
-                displayToast(
-                  message: 'Qr Image saved to gallery!',
-                  color: Colors.green[300],
-                );
+                if (shouldSave) {
+                  changeLoadingState(LoadingType.saveFileButton);
+                  await saveImageToGallery(
+                    qrDataHolder: qrDataHolder,
+                    firstName: firstName.text,
+                    lastName: lastName.text,
+                  );
+                  displayToast(
+                    message: 'Qr Image saved to gallery!',
+                    color: Colors.green[300],
+                  );
+                }
                 changeLoadingState(null);
               },
               icon: loadingType == LoadingType.saveFileButton
@@ -313,18 +323,14 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
           child: Hero(
             tag: HeroTags.shareFileButton,
             child: SmallButton(
-              onPressed: () {
-                shareImageToOthers(
-                  loadingOn: () {
-                    setState(() => loadingType = LoadingType.shareFileButton);
-                  },
-                  loadingOff: () {
-                    setState(() => loadingType = null);
-                  },
+              onPressed: () async {
+                changeLoadingState(LoadingType.shareFileButton);
+                await shareImageToOthers(
                   qrDataHolder: qrDataHolder,
                   firstName: firstName.text,
                   lastName: lastName.text,
                 );
+                changeLoadingState(null);
               },
               icon: loadingType == LoadingType.shareFileButton
                   ? const SpinKitCircle(color: Colors.white, size: 30)
