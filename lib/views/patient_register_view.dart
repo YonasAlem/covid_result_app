@@ -1,6 +1,8 @@
 import 'dart:io';
+import 'package:covid_result_app/enums/hero_tags.dart';
 import 'package:covid_result_app/enums/loading_type.dart';
 import 'package:covid_result_app/methods/display_toast.dart';
+import 'package:covid_result_app/methods/share_image_to_others.dart';
 import 'package:covid_result_app/services/db_services/database_services.dart';
 
 import 'package:covid_result_app/widgets/qr_image_container_empty.dart';
@@ -16,6 +18,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../enums/operation_status.dart';
 import '../methods/change_date.dart';
+import '../methods/save_image_to_gallery.dart';
 import '../models/patient_model.dart';
 import '../widgets/drop_down_menu.dart';
 import '../widgets/big_button.dart';
@@ -248,7 +251,7 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
                         ),
                         const SizedBox(height: 5),
                         Hero(
-                          tag: 'bigButton',
+                          tag: HeroTags.bigButton,
                           child: BigButton(
                             onPressed: registerPatientData,
                             buttonColor: const Color(0xFF628ec5),
@@ -289,9 +292,15 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
       children: [
         Expanded(
           child: Hero(
-            tag: 'b1',
+            tag: HeroTags.saveFileButton,
             child: SmallButton(
-              onPressed: saveImageToGallery,
+              onPressed: () => saveImageToGallery(
+                loadingOn: setState(() => loadingType = LoadingType.saveFileButton),
+                loadingOff: setState(() => loadingType = null),
+                qrDataHolder: qrDataHolder,
+                firstName: firstName.text,
+                lastName: lastName.text,
+              ),
               icon: loadingType == LoadingType.saveFileButton
                   ? const SpinKitCircle(color: Colors.white, size: 30)
                   : const Icon(Icons.save),
@@ -301,10 +310,18 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
         const SizedBox(width: 10),
         Expanded(
           child: Hero(
-            tag: 'b2',
+            tag: HeroTags.shareFileButton,
             child: SmallButton(
-              onPressed: shareImageToOthers,
-              icon: loadingType == LoadingType.shareButton
+              onPressed: () {
+                shareImageToOthers(
+                  loadingOn: setState(() => loadingType = LoadingType.shareFileButton),
+                  loadingOff: setState(() => loadingType = null),
+                  qrDataHolder: qrDataHolder,
+                  firstName: firstName.text,
+                  lastName: lastName.text,
+                );
+              },
+              icon: loadingType == LoadingType.shareFileButton
                   ? const SpinKitCircle(color: Colors.white, size: 30)
                   : const Icon(Icons.share),
             ),
@@ -312,51 +329,6 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
         ),
       ],
     );
-  }
-
-  Future<void> shareImageToOthers() async {
-    // turn on loading widget
-    setState(() => loadingType = LoadingType.shareButton);
-    // capture widget as image
-    final image = await screenshotController.captureFromWidget(
-      QrGeneratedImage(
-        qrDataHolder: qrDataHolder,
-        firstName: firstName,
-        lastName: lastName,
-      ),
-    );
-    // turn off loading widget
-    setState(() => loadingType = null);
-    // get phone's system directory
-    final dir = await getApplicationDocumentsDirectory();
-    // create a file in system directory
-    final imageDir = File("${dir.path}/flutter.png");
-    // copy the captured widget to the file that have been created before
-    imageDir.writeAsBytesSync(image);
-    // share the file to other platforms
-    await Share.shareFiles([imageDir.path]);
-  }
-
-  Future<void> saveImageToGallery() async {
-    // turn on loading widget
-    setState(() => loadingType = LoadingType.saveFileButton);
-    // capture widget as image
-    final image = await screenshotController.captureFromWidget(
-      QrGeneratedImage(
-        qrDataHolder: qrDataHolder,
-        firstName: firstName,
-        lastName: lastName,
-      ),
-    );
-    // turn off loading widget
-    setState(() => loadingType = null);
-    // request a permission for the storage
-    await [Permission.storage].request();
-    // create a timestamp for image file name
-    final timeStamp = today.toIso8601String().replaceAll('.', '-').replaceAll(':', '-');
-    final imageName = 'screenshot_$timeStamp';
-    // save the file to the gallery
-    await ImageGallerySaver.saveImage(image, name: imageName);
   }
 
   Future<void> _qrGenerateButtonAction() async {

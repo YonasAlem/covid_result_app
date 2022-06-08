@@ -12,8 +12,8 @@ class QrGeneratedImage extends StatelessWidget {
   }) : super(key: key);
 
   final String qrDataHolder;
-  final TextEditingController firstName;
-  final TextEditingController lastName;
+  final String firstName;
+  final String lastName;
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +40,7 @@ class QrGeneratedImage extends StatelessWidget {
             ),
           ),
           Text(
-            '${firstName.text.trim().toUpperCase()} ${lastName.text.trim().toUpperCase()}',
+            '${firstName.trim().toUpperCase()} ${lastName.trim().toUpperCase()}',
             style: TextStyle(
               fontSize: 16,
               letterSpacing: 1,

@@ -1,5 +1,5 @@
 enum LoadingType {
-  shareButton,
+  shareFileButton,
   saveFileButton,
   qrGenerateButton,
 }

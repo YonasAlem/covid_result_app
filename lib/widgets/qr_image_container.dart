@@ -20,7 +20,7 @@ class QrImageContainerFull extends StatelessWidget {
     return InkWell(
       onTap: () => Navigator.of(context).pushNamed(
         FullScreenQRView.routeName,
-        arguments: [qrDataHolder, "$firstName $lastName"],
+        arguments: [qrDataHolder, firstName, lastName],
       ),
       child: Hero(
         tag: 'qr',
