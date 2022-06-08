@@ -6,14 +6,12 @@ import 'package:covid_result_app/widgets/scaffold_background.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_storage/get_storage.dart';
 
 import '../services/auth_services/auth_exceptions.dart';
 import '../services/auth_services/auth_services.dart';
 import '../widgets/animated_text_widget.dart';
 import '../widgets/auth_views_widgets/logo_and_title.dart';
-import '../widgets/loading_widget.dart';
 import '../widgets/submit_button_big.dart';
 import '../widgets/submit_button_small.dart';
 import '../widgets/text_widget_small.dart';

@@ -10,11 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:screenshot/screenshot.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../enums/operation_status.dart';
 import '../methods/change_date.dart';
@@ -23,7 +19,6 @@ import '../models/patient_model.dart';
 import '../widgets/drop_down_menu.dart';
 import '../widgets/big_button.dart';
 import '../widgets/patient_form_field.dart';
-import '../widgets/qr_generated_image.dart';
 import '../widgets/qr_image_container.dart';
 import '../widgets/small_button.dart';
 
@@ -294,13 +289,19 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
           child: Hero(
             tag: HeroTags.saveFileButton,
             child: SmallButton(
-              onPressed: () => saveImageToGallery(
-                loadingOn: setState(() => loadingType = LoadingType.saveFileButton),
-                loadingOff: setState(() => loadingType = null),
-                qrDataHolder: qrDataHolder,
-                firstName: firstName.text,
-                lastName: lastName.text,
-              ),
+              onPressed: () async {
+                changeLoadingState(LoadingType.saveFileButton);
+                await saveImageToGallery(
+                  qrDataHolder: qrDataHolder,
+                  firstName: firstName.text,
+                  lastName: lastName.text,
+                );
+                displayToast(
+                  message: 'Qr Image saved to gallery!',
+                  color: Colors.green[300],
+                );
+                changeLoadingState(null);
+              },
               icon: loadingType == LoadingType.saveFileButton
                   ? const SpinKitCircle(color: Colors.white, size: 30)
                   : const Icon(Icons.save),
@@ -314,8 +315,12 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
             child: SmallButton(
               onPressed: () {
                 shareImageToOthers(
-                  loadingOn: setState(() => loadingType = LoadingType.shareFileButton),
-                  loadingOff: setState(() => loadingType = null),
+                  loadingOn: () {
+                    setState(() => loadingType = LoadingType.shareFileButton);
+                  },
+                  loadingOff: () {
+                    setState(() => loadingType = null);
+                  },
                   qrDataHolder: qrDataHolder,
                   firstName: firstName.text,
                   lastName: lastName.text,
@@ -395,6 +400,10 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
         );
       }
     }
+  }
+
+  changeLoadingState(Enum? loadingButton) {
+    setState(() => loadingType = loadingButton);
   }
 }
 

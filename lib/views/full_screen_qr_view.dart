@@ -2,8 +2,6 @@ import 'package:covid_result_app/enums/hero_tags.dart';
 import 'package:covid_result_app/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:screenshot/screenshot.dart';
 
@@ -11,7 +9,6 @@ import '../enums/loading_type.dart';
 import '../methods/save_image_to_gallery.dart';
 import '../methods/share_image_to_others.dart';
 import '../widgets/big_button.dart';
-import '../widgets/qr_generated_image.dart';
 import '../widgets/small_button.dart';
 
 class FullScreenQRView extends StatefulWidget {
@@ -132,8 +129,12 @@ class _FullScreenQRViewState extends State<FullScreenQRView> {
             tag: HeroTags.saveFileButton,
             child: SmallButton(
               onPressed: () => saveImageToGallery(
-                loadingOn: setState(() => loadingType = LoadingType.saveFileButton),
-                loadingOff: setState(() => loadingType = null),
+                loadingOn: () {
+                  setState(() => loadingType = LoadingType.saveFileButton);
+                },
+                loadingOff: () {
+                  setState(() => loadingType = null);
+                },
                 qrDataHolder: args[0].toString(),
                 firstName: args[1].toString().toUpperCase(),
                 lastName: args[2].toString().toUpperCase(),
@@ -150,8 +151,12 @@ class _FullScreenQRViewState extends State<FullScreenQRView> {
             tag: HeroTags.shareFileButton,
             child: SmallButton(
               onPressed: () => shareImageToOthers(
-                loadingOn: setState(() => loadingType = LoadingType.shareFileButton),
-                loadingOff: setState(() => loadingType = null),
+                loadingOn: () {
+                  setState(() => loadingType = LoadingType.shareFileButton);
+                },
+                loadingOff: () {
+                  setState(() => loadingType = null);
+                },
                 qrDataHolder: args[0].toString(),
                 firstName: args[1].toString().toUpperCase(),
                 lastName: args[2].toString().toUpperCase(),

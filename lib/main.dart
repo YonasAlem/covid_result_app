@@ -77,6 +77,8 @@ class MyApp extends StatelessWidget {
               curve: Curves.easeIn,
               settings: settings,
             );
+          default:
+            return null;
         }
       },
     );

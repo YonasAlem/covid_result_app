@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:covid_result_app/widgets/animated_text_widget.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';

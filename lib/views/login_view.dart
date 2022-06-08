@@ -1,3 +1,4 @@
+import 'package:covid_result_app/enums/loading_type.dart';
 import 'package:covid_result_app/views/register_view.dart';
 import 'package:covid_result_app/widgets/animated_text_widget.dart';
 import 'package:covid_result_app/widgets/auth_views_widgets/logo_and_title.dart';
@@ -8,14 +9,12 @@ import 'package:covid_result_app/widgets/text_widget_small.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_storage/get_storage.dart';
 
 import '../services/auth_services/auth_exceptions.dart';
 import '../services/auth_services/auth_services.dart';
 import '../utils/colors.dart';
 import '../widgets/auth_views_widgets/auth_text_field.dart';
-import '../widgets/loading_widget.dart';
 import '../widgets/submit_button_big.dart';
 import 'home_view.dart';
 import 'verify_view.dart';
@@ -36,7 +35,7 @@ class _LoginViewState extends State<LoginView> {
   String? emailError;
   String? passwordError;
 
-  bool isLoading = false;
+  Enum? loadingType;
 
   GetStorage box = GetStorage();
 
@@ -131,11 +130,11 @@ class _LoginViewState extends State<LoginView> {
         Hero(
           tag: 'SubmitButtonBig',
           child: SubmitButtonBig(
-            onTap: isLoading
+            onTap: loadingType == LoadingType.loginButton
                 ? () => displayToast(message: 'Please wait while loading ...')
                 : _loginCompany,
             gradient: gradient1,
-            child: isLoading
+            child: loadingType == LoadingType.loginButton
                 ? const SpinKitCircle(color: Colors.white, size: 30)
                 : const Text(
                     'Login',
@@ -155,7 +154,7 @@ class _LoginViewState extends State<LoginView> {
               havePadding: false,
             ),
             SubmitButtonSmall(
-              onTap: isLoading
+              onTap: loadingType == LoadingType.loginButton
                   ? () => displayToast(message: 'Please wait while loading ...')
                   : () {
                       box.write('email1', _email.text);
@@ -188,12 +187,12 @@ class _LoginViewState extends State<LoginView> {
       if (password.isEmpty) setPasswordErrorMessage('Password can not be empty.');
     } else {
       try {
-        setState(() => isLoading = true);
+        changeLoadingState(state: true);
         await AuthServices.firebase().login(email: email, password: password);
         final currentUser = AuthServices.firebase().currentUser;
         if (currentUser?.isEmailVerified ?? false) {
           if (mounted) {
-            turnOffLoadingWidget();
+            changeLoadingState(state: false);
             Navigator.of(context).pushNamedAndRemoveUntil(
               HomeView.routeName,
               (route) => false,
@@ -201,19 +200,19 @@ class _LoginViewState extends State<LoginView> {
           }
         } else {
           if (mounted) {
-            turnOffLoadingWidget();
+            changeLoadingState(state: false);
             Navigator.of(context).pushNamed(VerifyView.routeName);
           }
         }
       } on UserNotFoundAuthException {
         box.write('email', _email.text);
-        turnOffLoadingWidget();
+        changeLoadingState(state: false);
         setEmailErrorMessage("Couldn't find your account.");
       } on WrongPasswordAuthException {
-        turnOffLoadingWidget();
+        changeLoadingState(state: false);
         setPasswordErrorMessage('Wrong password, Please try again!');
       } on GenericAuthException {
-        turnOffLoadingWidget();
+        changeLoadingState(state: false);
         displayToast(message: 'Too many requests, please try again!');
       }
     }
@@ -221,5 +220,10 @@ class _LoginViewState extends State<LoginView> {
 
   void setPasswordErrorMessage(String message) => setState(() => passwordError = message);
   void setEmailErrorMessage(String message) => setState(() => emailError = message);
-  void turnOffLoadingWidget() => setState(() => isLoading = false);
+
+  void changeLoadingState({required bool state}) {
+    if (state == true) loadingType = LoadingType.loginButton;
+    if (state == false) loadingType = null;
+    setState(() {});
+  }
 }

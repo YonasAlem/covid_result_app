@@ -46,7 +46,6 @@ dependencies:
   pretty_qr_code: ^2.0.2
   http: ^0.13.4
   flutter_easyloading: ^3.0.5
-  connectivity_plus: ^2.3.2
   path_provider: ^2.0.11
   screenshot: ^1.2.3
   image_gallery_saver: ^1.7.1

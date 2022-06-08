@@ -6,8 +6,8 @@ import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 
 Future<void> shareImageToOthers({
-  void loadingOn,
-  void loadingOff,
+  Function()? loadingOn,
+  Function()? loadingOff,
   required String qrDataHolder,
   required String firstName,
   required String lastName,

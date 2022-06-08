@@ -5,8 +5,8 @@ import 'package:screenshot/screenshot.dart';
 import '../widgets/qr_generated_image.dart';
 
 Future<void> saveImageToGallery({
-  void loadingOn,
-  void loadingOff,
+  Function()? loadingOn,
+  Function()? loadingOff,
   required String qrDataHolder,
   required String firstName,
   required String lastName,
