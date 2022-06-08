@@ -24,28 +24,30 @@ class QrGeneratedImage extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           PrettyQr(
-            size: 150,
+            size: 300,
             data: qrDataHolder,
             roundEdges: true,
             errorCorrectLevel: QrErrorCorrectLevel.M,
           ),
           const SizedBox(height: 15),
-          const Text(
-            'FULL NAME:',
-            style: TextStyle(
-              color: Colors.grey,
-              letterSpacing: 1,
-              fontSize: 12,
-              decoration: TextDecoration.underline,
-            ),
-          ),
-          Text(
-            '${firstName.trim().toUpperCase()} ${lastName.trim().toUpperCase()}',
-            style: TextStyle(
-              fontSize: 16,
-              letterSpacing: 1,
-              color: textColor,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'FULL NAME:  ',
+                style: TextStyle(color: Colors.grey, fontSize: 12, letterSpacing: 1),
+              ),
+              Text(
+                '${firstName.trim().toUpperCase()} ${lastName.trim().toUpperCase()}',
+                style: TextStyle(
+                  fontSize: 18,
+                  letterSpacing: 1,
+                  color: textColor,
+                  backgroundColor: Colors.grey.withOpacity(0.3),
+                  fontFamily: 'Bold',
+                ),
+              ),
+            ],
           ),
         ],
       ),

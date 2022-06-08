@@ -234,15 +234,12 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
                           child: flag ? qrGenerateButton() : saveAndShareButtons(),
                         ),
                         const SizedBox(height: 15),
-                        const Hero(
-                          tag: 'warn',
-                          child: Text(
-                            'Make sure you shared it before saving it to the server.',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey,
-                            ),
+                        const Text(
+                          'Make sure you shared it before saving it to the server.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey,
                           ),
                         ),
                         const SizedBox(height: 5),

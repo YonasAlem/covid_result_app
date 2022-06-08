@@ -6,8 +6,10 @@ import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:screenshot/screenshot.dart';
 
 import '../enums/loading_type.dart';
+import '../methods/display_toast.dart';
 import '../methods/save_image_to_gallery.dart';
 import '../methods/share_image_to_others.dart';
+import '../methods/warning_dialog.dart';
 import '../widgets/big_button.dart';
 import '../widgets/small_button.dart';
 
@@ -24,17 +26,13 @@ class _FullScreenQRViewState extends State<FullScreenQRView> {
 
   final ScreenshotController screenshotController = ScreenshotController();
 
-  late final List args;
-
-  @override
-  void initState() {
-    args = ModalRoute.of(context)!.settings.arguments as List;
-    super.initState();
-  }
+  List args = [];
 
   @override
   Widget build(BuildContext context) {
+    args = ModalRoute.of(context)!.settings.arguments as List;
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -42,6 +40,7 @@ class _FullScreenQRViewState extends State<FullScreenQRView> {
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(
             child: Column(
@@ -63,13 +62,14 @@ class _FullScreenQRViewState extends State<FullScreenQRView> {
                 ),
                 const SizedBox(height: 15),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text(
                       'FULL NAME:  ',
                       style: TextStyle(color: Colors.grey, fontSize: 12, letterSpacing: 1),
                     ),
                     Text(
-                      args[1].toString().toUpperCase(),
+                      "${args[1].toString().toUpperCase()} ${args[2].toString().toUpperCase()}",
                       style: TextStyle(
                         fontSize: 18,
                         letterSpacing: 1,
@@ -88,15 +88,12 @@ class _FullScreenQRViewState extends State<FullScreenQRView> {
             child: saveAndShareButtons(),
           ),
           const SizedBox(height: 15),
-          const Hero(
-            tag: 'warn',
-            child: Text(
-              'Make sure you shared it before saving it to the server.',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey,
-              ),
+          const Text(
+            'Make sure you shared it before saving it to the server.',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey,
             ),
           ),
           const SizedBox(height: 5),
@@ -128,17 +125,28 @@ class _FullScreenQRViewState extends State<FullScreenQRView> {
           child: Hero(
             tag: HeroTags.saveFileButton,
             child: SmallButton(
-              onPressed: () => saveImageToGallery(
-                loadingOn: () {
-                  setState(() => loadingType = LoadingType.saveFileButton);
-                },
-                loadingOff: () {
-                  setState(() => loadingType = null);
-                },
-                qrDataHolder: args[0].toString(),
-                firstName: args[1].toString().toUpperCase(),
-                lastName: args[2].toString().toUpperCase(),
-              ),
+              onPressed: () async {
+                var shouldSave = await warningDialog(
+                  context: context,
+                  boxTitle: "Saving image",
+                  boxDescription: "This will save the qr image to the gallery",
+                  cancleText: "Don't",
+                  okText: "Save",
+                );
+                if (shouldSave) {
+                  changeLoadingState(LoadingType.saveFileButton);
+                  await saveImageToGallery(
+                    qrDataHolder: args[0].toString(),
+                    firstName: args[1].toString().trim().toUpperCase(),
+                    lastName: args[2].toString().trim().toUpperCase(),
+                  );
+                  displayToast(
+                    message: 'Qr Image saved to gallery!',
+                    color: Colors.green[300],
+                  );
+                }
+                changeLoadingState(null);
+              },
               icon: loadingType == LoadingType.saveFileButton
                   ? const SpinKitCircle(color: Colors.white, size: 30)
                   : const Icon(Icons.save),
@@ -150,17 +158,15 @@ class _FullScreenQRViewState extends State<FullScreenQRView> {
           child: Hero(
             tag: HeroTags.shareFileButton,
             child: SmallButton(
-              onPressed: () => shareImageToOthers(
-                loadingOn: () {
-                  setState(() => loadingType = LoadingType.shareFileButton);
-                },
-                loadingOff: () {
-                  setState(() => loadingType = null);
-                },
-                qrDataHolder: args[0].toString(),
-                firstName: args[1].toString().toUpperCase(),
-                lastName: args[2].toString().toUpperCase(),
-              ),
+              onPressed: () async {
+                changeLoadingState(LoadingType.shareFileButton);
+                await shareImageToOthers(
+                  qrDataHolder: args[0].toString(),
+                  firstName: args[1].toString().trim().toUpperCase(),
+                  lastName: args[2].toString().trim().toUpperCase(),
+                );
+                changeLoadingState(null);
+              },
               icon: loadingType == LoadingType.shareFileButton
                   ? const SpinKitCircle(color: Colors.white, size: 30)
                   : const Icon(Icons.share),
@@ -169,5 +175,9 @@ class _FullScreenQRViewState extends State<FullScreenQRView> {
         ),
       ],
     );
+  }
+
+  changeLoadingState(Enum? loadingButton) {
+    setState(() => loadingType = loadingButton);
   }
 }
