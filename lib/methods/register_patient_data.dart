@@ -8,7 +8,7 @@ import '../enums/operation_status.dart';
 import '../services/db_services/database_services.dart';
 import 'display_snackbar.dart';
 
-Future<void> registerPatientData(
+Future registerPatientData(
   context, {
   required String qrDataHolder,
   required PatientModel patientModel,
@@ -23,6 +23,7 @@ Future<void> registerPatientData(
       );
       if (newResult == OperationStatus.succeed) {
         await EasyLoading.showSuccess('Data saved successfully.');
+        return true;
       } else {
         await EasyLoading.showError('There is a problem, please try again!');
       }

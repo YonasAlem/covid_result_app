@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:covid_result_app/enums/hero_tags.dart';
 import 'package:covid_result_app/methods/my_app_bar.dart';
 import 'package:covid_result_app/utils/colors.dart';
@@ -8,7 +10,7 @@ import 'package:screenshot/screenshot.dart';
 
 import '../enums/loading_type.dart';
 import '../methods/display_snackbar.dart';
-import '../methods/registerPatientData.dart';
+import '../methods/register_patient_data.dart';
 import '../methods/save_image_to_gallery.dart';
 import '../methods/share_image_to_others.dart';
 import '../methods/warning_dialog.dart';
@@ -120,12 +122,17 @@ class _FullScreenQRViewState extends State<FullScreenQRView> {
                   tag: HeroTags.bigButton,
                   child: BigButton(
                     onPressed: () async {
-                      await registerPatientData(
+                      var result = await registerPatientData(
                         context,
                         qrDataHolder: args[0],
                         patientModel: args[1],
                       );
-                      if (mounted) Navigator.of(context).pop();
+                      log(result.toString());
+                      if (result == true && mounted) {
+                        Navigator.of(context).pop(true);
+                      } else {
+                        Navigator.of(context).pop(false);
+                      }
                     },
                     buttonColor: const Color(0xFF628ec5),
                     text: const Text(

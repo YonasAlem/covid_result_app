@@ -18,7 +18,7 @@ import 'package:screenshot/screenshot.dart';
 
 import '../enums/operation_status.dart';
 import '../methods/change_date.dart';
-import '../methods/registerPatientData.dart';
+import '../methods/register_patient_data.dart';
 import '../methods/save_image_to_gallery.dart';
 import '../models/patient_model.dart';
 import '../utils/colors.dart';
@@ -234,7 +234,7 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
                           ? const QrImageContainerEmpty()
                           : InkWell(
                               onTap: () async {
-                                await Navigator.of(context).pushNamed(
+                                var result = await Navigator.of(context).pushNamed(
                                   FullScreenQRView.routeName,
                                   arguments: [
                                     qrDataHolder,
@@ -250,8 +250,8 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
                                           "${today.day}-${today.month}-${today.year}",
                                     ),
                                   ],
-                                );
-                                resetDataEntry();
+                                ) as bool;
+                                if (result) resetDataEntry();
                               },
                               child: Hero(
                                 tag: 'qr',
