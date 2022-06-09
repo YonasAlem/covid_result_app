@@ -7,16 +7,14 @@ import 'package:share_plus/share_plus.dart';
 
 Future<void> shareImageToOthers({
   required String qrDataHolder,
-  required String firstName,
-  required String lastName,
+  required String fullName,
 }) async {
   final ScreenshotController screenshotController = ScreenshotController();
   // capture widget as image
   final image = await screenshotController.captureFromWidget(
     QrGeneratedImage(
       qrDataHolder: qrDataHolder,
-      firstName: firstName,
-      lastName: lastName,
+      fullName: fullName,
     ),
   );
   // get phone's system directory

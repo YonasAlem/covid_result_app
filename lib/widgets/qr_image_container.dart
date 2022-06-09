@@ -17,10 +17,12 @@ class QrImageContainerFull extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => Navigator.of(context).pushNamed(
-        FullScreenQRView.routeName,
-        arguments: [qrDataHolder, patientModel],
-      ),
+      onTap: () async {
+        await Navigator.of(context).pushNamed(
+          FullScreenQRView.routeName,
+          arguments: [qrDataHolder, patientModel],
+        );
+      },
       child: Hero(
         tag: 'qr',
         child: Column(

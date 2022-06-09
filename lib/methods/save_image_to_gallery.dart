@@ -8,8 +8,7 @@ Future<void> saveImageToGallery({
   Function()? loadingOn,
   Function()? loadingOff,
   required String qrDataHolder,
-  required String firstName,
-  required String lastName,
+  required String fullName,
 }) async {
   final ScreenshotController screenshotController = ScreenshotController();
   // turn on loading widget
@@ -18,8 +17,7 @@ Future<void> saveImageToGallery({
   final image = await screenshotController.captureFromWidget(
     QrGeneratedImage(
       qrDataHolder: qrDataHolder,
-      firstName: firstName,
-      lastName: lastName,
+      fullName: fullName,
     ),
   );
   // turn off loading widget

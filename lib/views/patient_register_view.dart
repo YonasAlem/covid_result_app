@@ -13,6 +13,7 @@ import 'package:covid_result_app/widgets/qr_image_container_empty.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:screenshot/screenshot.dart';
 
 import '../enums/operation_status.dart';
@@ -26,6 +27,7 @@ import '../widgets/big_button.dart';
 import '../widgets/patient_form_field.dart';
 import '../widgets/qr_image_container.dart';
 import '../widgets/small_button.dart';
+import 'full_screen_qr_view.dart';
 
 class PatientRegisterView extends StatefulWidget {
   static const String routeName = '/registerpatient/';
@@ -230,16 +232,39 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
                     children: [
                       qrDataHolder.isEmpty
                           ? const QrImageContainerEmpty()
-                          : QrImageContainerFull(
-                              qrDataHolder: qrDataHolder,
-                              patientModel: PatientModel(
-                                fullName: '${firstName.text.trim()} ${lastName.text.trim()}',
-                                passportNumber: idNumber.text.trim(),
-                                dateOfBirth: birthDate.text,
-                                gender: selectedGender!,
-                                nationality: selectedCountry!,
-                                result: selectedResult!,
-                                resultTakenDate: "${today.day}-${today.month}-${today.year}",
+                          : InkWell(
+                              onTap: () async {
+                                await Navigator.of(context).pushNamed(
+                                  FullScreenQRView.routeName,
+                                  arguments: [
+                                    qrDataHolder,
+                                    PatientModel(
+                                      fullName:
+                                          '${firstName.text.trim()} ${lastName.text.trim()}',
+                                      passportNumber: idNumber.text.trim(),
+                                      dateOfBirth: birthDate.text,
+                                      gender: selectedGender!,
+                                      nationality: selectedCountry!,
+                                      result: selectedResult!,
+                                      resultTakenDate:
+                                          "${today.day}-${today.month}-${today.year}",
+                                    ),
+                                  ],
+                                );
+                                resetDataEntry();
+                              },
+                              child: Hero(
+                                tag: 'qr',
+                                child: Column(
+                                  children: [
+                                    PrettyQr(
+                                      size: 150,
+                                      data: qrDataHolder,
+                                      roundEdges: true,
+                                      errorCorrectLevel: QrErrorCorrectLevel.M,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                       const SizedBox(width: 20),
@@ -286,6 +311,7 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
                                             "${today.day}-${today.month}-${today.year}",
                                       ),
                                     );
+                                    resetDataEntry();
                                   }
                                 },
                                 buttonColor: const Color(0xFF628ec5),
@@ -342,8 +368,7 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
                   changeLoadingState(LoadingType.saveFileButton);
                   await saveImageToGallery(
                     qrDataHolder: qrDataHolder,
-                    firstName: firstName.text,
-                    lastName: lastName.text,
+                    fullName: '${firstName.text.trim()} ${lastName.text.trim()}',
                   );
                   displaySnackBar(
                     context: context,
@@ -369,8 +394,7 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
                 changeLoadingState(LoadingType.shareFileButton);
                 await shareImageToOthers(
                   qrDataHolder: qrDataHolder,
-                  firstName: firstName.text,
-                  lastName: lastName.text,
+                  fullName: '${firstName.text.trim()} ${lastName.text.trim()}',
                 );
                 changeLoadingState(null);
               },
@@ -404,14 +428,57 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
     } else if (selectedResult == null) {
       displaySnackBar(context: context, text: 'Specify the result please!');
     } else {
-      setState(() => loadingType = LoadingType.qrGenerateButton);
-      await Future.delayed(const Duration(milliseconds: 800));
-      setState(() {
-        flag = false;
-        loadingType = null;
-        qrDataHolder =
-            'https://covid-result-tester.herokuapp.com/test-result-using-qr-code/${idNumber.text}';
-      });
+      try {
+        final result = await InternetAddress.lookup('google.com');
+        if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+          await EasyLoading.show(status: 'Checking Patient Data');
+
+          var result = await DatabaseServices.mongoDb().singlePatientData(
+            idNumber: idNumber.text,
+          );
+          if (result == OperationStatus.failed) {
+            setState(() {
+              flag = false;
+              loadingType = null;
+              qrDataHolder =
+                  'https://covid-result-tester.herokuapp.com/test-result-using-qr-code/${idNumber.text}';
+            });
+            await EasyLoading.showSuccess('Patient data passed!');
+          } else {
+            var from = DateTime.parse(result.resultTakenDate);
+            var to = DateTime.now();
+
+            final dateDifference = (to.difference(from).inHours / 24).round();
+            if ('${firstName.text.trim()} ${lastName.text.trim()}' != result.fullName ||
+                selectedGender != result.gender ||
+                selectedCountry != result.nationality) {
+              await EasyLoading.showError(
+                'This ID belongs to another patient, Please use another one, OR make sure you put the data correctly!',
+                duration: const Duration(seconds: 2),
+              );
+            } else if (dateDifference < 14) {
+              await EasyLoading.showError(
+                'This patient already taken the test, Should be more than 14 days to take a test again.',
+                duration: const Duration(seconds: 2),
+              );
+            } else {
+              setState(() {
+                flag = false;
+                loadingType = null;
+                qrDataHolder =
+                    'https://covid-result-tester.herokuapp.com/test-result-using-qr-code/${idNumber.text}';
+              });
+              await EasyLoading.showSuccess('Patient data passed!');
+            }
+          }
+        }
+      } on SocketException catch (_) {
+        displaySnackBar(
+          context: context,
+          text: 'No internet connection found!',
+          backgroundColor: Colors.red[300],
+        );
+      }
     }
   }
 

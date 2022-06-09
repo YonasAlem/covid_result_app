@@ -7,13 +7,11 @@ class QrGeneratedImage extends StatelessWidget {
   const QrGeneratedImage({
     Key? key,
     required this.qrDataHolder,
-    required this.firstName,
-    required this.lastName,
+    required this.fullName,
   }) : super(key: key);
 
   final String qrDataHolder;
-  final String firstName;
-  final String lastName;
+  final String fullName;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +36,7 @@ class QrGeneratedImage extends StatelessWidget {
                 style: TextStyle(color: Colors.grey, fontSize: 12, letterSpacing: 1),
               ),
               Text(
-                '${firstName.trim().toUpperCase()} ${lastName.trim().toUpperCase()}',
+                fullName,
                 style: TextStyle(
                   fontSize: 18,
                   letterSpacing: 1,

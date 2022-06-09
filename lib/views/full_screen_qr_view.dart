@@ -87,7 +87,7 @@ class _FullScreenQRViewState extends State<FullScreenQRView> {
                         style: TextStyle(color: Colors.grey, fontSize: 12, letterSpacing: 1),
                       ),
                       Text(
-                        args[1].fullName,
+                        args[1].fullName.toUpperCase(),
                         style: TextStyle(
                           fontSize: 18,
                           letterSpacing: 1,
@@ -125,6 +125,7 @@ class _FullScreenQRViewState extends State<FullScreenQRView> {
                         qrDataHolder: args[0],
                         patientModel: args[1],
                       );
+                      if (mounted) Navigator.of(context).pop();
                     },
                     buttonColor: const Color(0xFF628ec5),
                     text: const Text(
@@ -161,9 +162,8 @@ class _FullScreenQRViewState extends State<FullScreenQRView> {
                 if (shouldSave) {
                   changeLoadingState(LoadingType.saveFileButton);
                   await saveImageToGallery(
-                    qrDataHolder: args[0].toString(),
-                    firstName: args[1].toString().trim().toUpperCase(),
-                    lastName: args[2].toString().trim().toUpperCase(),
+                    qrDataHolder: args[0],
+                    fullName: args[1].fullName.toUpperCase(),
                   );
                   displaySnackBar(
                     context: context,
@@ -189,8 +189,7 @@ class _FullScreenQRViewState extends State<FullScreenQRView> {
                 changeLoadingState(LoadingType.shareFileButton);
                 await shareImageToOthers(
                   qrDataHolder: args[0].toString(),
-                  firstName: args[1].toString().trim().toUpperCase(),
-                  lastName: args[2].toString().trim().toUpperCase(),
+                  fullName: args[1].fullName,
                 );
                 changeLoadingState(null);
               },
