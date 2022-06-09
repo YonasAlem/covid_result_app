@@ -1,4 +1,5 @@
 import 'package:covid_result_app/enums/hero_tags.dart';
+import 'package:covid_result_app/methods/my_app_bar.dart';
 import 'package:covid_result_app/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -33,8 +34,7 @@ class _FullScreenQRViewState extends State<FullScreenQRView> {
     args = ModalRoute.of(context)!.settings.arguments as List;
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
+      appBar: appBar(
         elevation: 0,
         leading: BackButton(color: textColor),
       ),

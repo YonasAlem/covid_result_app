@@ -4,10 +4,10 @@ import 'package:covid_result_app/widgets/auth_views_widgets/auth_text_field.dart
 import 'package:covid_result_app/methods/display_toast.dart';
 import 'package:covid_result_app/widgets/scaffold_background.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get_storage/get_storage.dart';
 
+import '../methods/my_app_bar.dart';
 import '../services/auth_services/auth_exceptions.dart';
 import '../services/auth_services/auth_services.dart';
 import '../widgets/animated_text_widget.dart';
@@ -63,13 +63,10 @@ class _RegisterViewState extends State<RegisterView> {
     return ScaffoldBackground(
       scaffold: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          toolbarHeight: 0,
+        appBar: appBar(
+          toolBarHeight: 0,
           elevation: 0,
-          systemOverlayStyle: const SystemUiOverlayStyle(
-            statusBarIconBrightness: Brightness.dark,
-            statusBarColor: Colors.white,
-          ),
+          statusBarIconBrightness: Brightness.dark,
         ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 20),

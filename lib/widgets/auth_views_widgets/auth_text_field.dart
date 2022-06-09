@@ -34,6 +34,8 @@ class _AuthTextFieldState extends State<AuthTextField> {
         color: Colors.grey.shade700,
         letterSpacing: 1,
       ),
+      keyboardType:
+          widget.isPassword ? TextInputType.visiblePassword : TextInputType.emailAddress,
       decoration: InputDecoration(
         contentPadding: const EdgeInsets.all(10),
         isDense: true,

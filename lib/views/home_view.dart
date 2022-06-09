@@ -1,12 +1,12 @@
 import 'dart:io';
 
+import 'package:covid_result_app/methods/my_app_bar.dart';
 import 'package:covid_result_app/utils/colors.dart';
 import 'package:covid_result_app/views/patient_list_view.dart';
 import 'package:covid_result_app/views/patient_register_view.dart';
 import 'package:covid_result_app/widgets/home_view_widgets/qr_scanner_button.dart';
 import 'package:covid_result_app/widgets/text_widget_big.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../services/auth_services/auth_services.dart';
 import '../widgets/home_view_widgets/task_button.dart';
@@ -78,24 +78,10 @@ class _HomeViewState extends State<HomeView> {
         ),
         Scaffold(
           backgroundColor: Colors.transparent,
-          appBar: AppBar(
-            backgroundColor: Colors.white,
+          appBar: appBar(
             elevation: 0,
-            title: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Text(
-                'Home view',
-                style: TextStyle(
-                  color: textColor,
-                  fontFamily: 'Bold',
-                  letterSpacing: 1,
-                ),
-              ),
-            ),
-            systemOverlayStyle: const SystemUiOverlayStyle(
-              statusBarColor: Colors.transparent,
-              statusBarIconBrightness: Brightness.dark,
-            ),
+            title: 'Home View',
+            statusBarIconBrightness: Brightness.dark,
             actions: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),

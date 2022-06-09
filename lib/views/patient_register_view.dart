@@ -2,13 +2,13 @@ import 'dart:io';
 import 'package:covid_result_app/enums/hero_tags.dart';
 import 'package:covid_result_app/enums/loading_type.dart';
 import 'package:covid_result_app/methods/display_toast.dart';
+import 'package:covid_result_app/methods/my_app_bar.dart';
 import 'package:covid_result_app/methods/share_image_to_others.dart';
 import 'package:covid_result_app/methods/warning_dialog.dart';
 import 'package:covid_result_app/services/db_services/database_services.dart';
 
 import 'package:covid_result_app/widgets/qr_image_container_empty.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:screenshot/screenshot.dart';
@@ -84,16 +84,9 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
   Widget build(BuildContext context) {
     setActiveBorderColor();
     return Scaffold(
-      appBar: AppBar(
+      appBar: appBar(
         backgroundColor: const Color(0xFF628ec5),
-        title: const Text(
-          'Patient form',
-          style: TextStyle(letterSpacing: 1),
-        ),
-        systemOverlayStyle: const SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          statusBarIconBrightness: Brightness.light,
-        ),
+        title: 'Patient form',
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
@@ -392,6 +385,7 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
           );
           if (newResult == OperationStatus.succeed) {
             await EasyLoading.showSuccess('Data saved successfully.');
+            resetDataEntry();
           } else {
             await EasyLoading.showError('There is a problem, please try again!');
           }
@@ -405,8 +399,19 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
     }
   }
 
-  changeLoadingState(Enum? loadingButton) {
-    setState(() => loadingType = loadingButton);
+  changeLoadingState(Enum? loadingButton) => setState(() => loadingType = loadingButton);
+
+  void resetDataEntry() {
+    firstName.text = '';
+    lastName.text = '';
+    idNumber.text = '';
+    birthDate.text = '${today.day} / ${today.month} / ${today.year}';
+    selectedGender = null;
+    selectedResult = null;
+    selectedCountry = null;
+    resultDate.text = '${today.day} / ${today.month} / ${today.year}';
+    qrDataHolder = '';
+    flag = true;
   }
 }
 

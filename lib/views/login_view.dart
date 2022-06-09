@@ -1,4 +1,5 @@
 import 'package:covid_result_app/enums/loading_type.dart';
+import 'package:covid_result_app/methods/my_app_bar.dart';
 import 'package:covid_result_app/views/register_view.dart';
 import 'package:covid_result_app/widgets/animated_text_widget.dart';
 import 'package:covid_result_app/widgets/auth_views_widgets/logo_and_title.dart';
@@ -7,7 +8,6 @@ import 'package:covid_result_app/widgets/scaffold_background.dart';
 import 'package:covid_result_app/widgets/submit_button_small.dart';
 import 'package:covid_result_app/widgets/text_widget_small.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get_storage/get_storage.dart';
 
@@ -62,13 +62,10 @@ class _LoginViewState extends State<LoginView> {
     return ScaffoldBackground(
       scaffold: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          toolbarHeight: 0,
+        appBar: appBar(
+          toolBarHeight: 0,
           elevation: 0,
-          systemOverlayStyle: const SystemUiOverlayStyle(
-            statusBarIconBrightness: Brightness.dark,
-            statusBarColor: Colors.white,
-          ),
+          statusBarIconBrightness: Brightness.dark,
         ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 20),

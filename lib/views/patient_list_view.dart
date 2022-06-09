@@ -1,7 +1,6 @@
+import 'package:covid_result_app/methods/my_app_bar.dart';
 import 'package:covid_result_app/services/db_services/database_services.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import '../models/patient_model.dart';
@@ -25,18 +24,9 @@ class _PatientListViewState extends State<PatientListView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: appBar(
         backgroundColor: const Color(0xFFdb7634),
-        title: const Text(
-          'Patient\'s List',
-          style: TextStyle(
-            letterSpacing: 1,
-          ),
-        ),
-        systemOverlayStyle: const SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          statusBarIconBrightness: Brightness.light,
-        ),
+        title: "Patient's List",
       ),
       body: FutureBuilder(
         future: patientListModel,
