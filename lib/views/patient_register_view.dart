@@ -298,7 +298,6 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
                                   } else {
                                     await registerPatientData(
                                       context,
-                                      qrDataHolder: qrDataHolder,
                                       patientModel: PatientModel(
                                         fullName:
                                             '${firstName.text.trim()} ${lastName.text.trim()}',
@@ -437,12 +436,7 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
             idNumber: idNumber.text,
           );
           if (result == OperationStatus.failed) {
-            setState(() {
-              flag = false;
-              loadingType = null;
-              qrDataHolder =
-                  'https://covid-result-tester.herokuapp.com/test-result-using-qr-code/${idNumber.text}';
-            });
+            changeState();
             await EasyLoading.showSuccess('Patient data passed!');
           } else {
             var from = DateTime.parse(result.resultTakenDate);
@@ -462,12 +456,7 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
                 duration: const Duration(seconds: 2),
               );
             } else {
-              setState(() {
-                flag = false;
-                loadingType = null;
-                qrDataHolder =
-                    'https://covid-result-tester.herokuapp.com/test-result-using-qr-code/${idNumber.text}';
-              });
+              changeState();
               await EasyLoading.showSuccess('Patient data passed!');
             }
           }
@@ -481,6 +470,13 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
       }
     }
   }
+
+  changeState() => setState(() {
+        flag = false;
+        loadingType = null;
+        qrDataHolder =
+            'https://covid-result-tester.herokuapp.com/test-result-using-qr-code/${idNumber.text}';
+      });
 
   Future<void> registerPatientDatas() async {
     EasyLoadingStyle.custom;

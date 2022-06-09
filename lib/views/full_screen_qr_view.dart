@@ -124,10 +124,8 @@ class _FullScreenQRViewState extends State<FullScreenQRView> {
                     onPressed: () async {
                       var result = await registerPatientData(
                         context,
-                        qrDataHolder: args[0],
                         patientModel: args[1],
                       );
-                      log(result.toString());
                       if (result == true && mounted) {
                         Navigator.of(context).pop(true);
                       } else {

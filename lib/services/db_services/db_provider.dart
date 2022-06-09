@@ -8,4 +8,6 @@ abstract class DatabaseProvider {
   Future<List<PatientModel>> viewAllPatient();
 
   Future singlePatientData({required String idNumber});
+
+  Future<OperationStatus> updatePatient({required PatientModel patientModel});
 }

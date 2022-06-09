@@ -23,4 +23,9 @@ class DatabaseServices implements DatabaseProvider {
   Future singlePatientData({required String idNumber}) {
     return dbProvider.singlePatientData(idNumber: idNumber);
   }
+
+  @override
+  Future<OperationStatus> updatePatient({required PatientModel patientModel}) {
+    return dbProvider.updatePatient(patientModel: patientModel);
+  }
 }

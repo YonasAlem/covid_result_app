@@ -1,4 +1,7 @@
 import 'package:covid_result_app/methods/my_app_bar.dart';
+import 'package:covid_result_app/methods/update_patient_data.dart';
+import 'package:covid_result_app/services/db_services/database_services.dart';
+import 'package:covid_result_app/views/home_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
@@ -266,6 +269,27 @@ class _PatientUpdateViewState extends State<PatientUpdateView> {
                                   context: context,
                                   text: "First or last name can not be empty!",
                                 );
+                              } else {
+                                await updatePatientData(
+                                  context,
+                                  patientModel: PatientModel(
+                                    fullName:
+                                        '${firstName.text.trim()} ${lastName.text.trim()}',
+                                    passportNumber: idNumber.text.trim(),
+                                    dateOfBirth: birthDate.text,
+                                    gender: selectedGender!,
+                                    nationality: selectedCountry!,
+                                    result: selectedResult!,
+                                    resultTakenDate:
+                                        "${today.day}-${today.month}-${today.year}",
+                                  ),
+                                );
+
+                                if (mounted) {
+                                  Navigator.of(context).pushReplacementNamed(
+                                    HomeView.routeName,
+                                  );
+                                }
                               }
                             },
                             buttonColor: const Color(0xffb774bd),
@@ -289,7 +313,6 @@ class _PatientUpdateViewState extends State<PatientUpdateView> {
 
   Row saveAndShareButtons() {
     return Row(
-      key: const Key('2'),
       children: [
         Expanded(
           child: Hero(

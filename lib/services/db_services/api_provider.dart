@@ -43,4 +43,15 @@ class ApiProvider implements DatabaseProvider {
       return OperationStatus.failed;
     }
   }
+
+  @override
+  Future<OperationStatus> updatePatient({required PatientModel patientModel}) async {
+    final Uri url = Uri.parse('$apiUri${patientModel.passportNumber}');
+    final response = await http.put(url, body: patientModel.toJson());
+    if (response.statusCode == 200) {
+      return OperationStatus.succeed;
+    } else {
+      return OperationStatus.failed;
+    }
+  }
 }
