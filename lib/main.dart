@@ -74,7 +74,6 @@ class MyApp extends StatelessWidget {
             return PageTransition(
               child: const FullScreenQRView(),
               type: PageTransitionType.fade,
-              duration: const Duration(milliseconds: 500),
               curve: Curves.easeIn,
               settings: settings,
             );

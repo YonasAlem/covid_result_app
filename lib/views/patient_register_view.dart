@@ -1,7 +1,7 @@
-import 'dart:developer';
 import 'dart:io';
 import 'package:covid_result_app/enums/hero_tags.dart';
 import 'package:covid_result_app/enums/loading_type.dart';
+import 'package:covid_result_app/methods/display_snackbar.dart';
 import 'package:covid_result_app/methods/display_toast.dart';
 import 'package:covid_result_app/methods/my_app_bar.dart';
 import 'package:covid_result_app/methods/share_image_to_others.dart';
@@ -18,6 +18,7 @@ import '../enums/operation_status.dart';
 import '../methods/change_date.dart';
 import '../methods/save_image_to_gallery.dart';
 import '../models/patient_model.dart';
+import '../utils/colors.dart';
 import '../widgets/drop_down_menu.dart';
 import '../widgets/big_button.dart';
 import '../widgets/patient_form_field.dart';
@@ -88,167 +89,190 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
   @override
   Widget build(BuildContext context) {
     setActiveBorderColor();
-    return Scaffold(
-      appBar: appBar(
-        backgroundColor: const Color(0xFF628ec5),
-        title: 'Patient form',
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: PatientFormField(
-                    editingController: firstName,
-                    text: 'first name',
-                    hintText: 'enter first name',
-                    activeBorderColor: activeBorderColor!,
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: PatientFormField(
-                    editingController: lastName,
-                    text: 'last name',
-                    hintText: 'enter last name',
-                    activeBorderColor: activeBorderColor!,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            PatientFormField(
-              editingController: idNumber,
-              text: 'identification code',
-              hintText: 'passport or kebele id',
-              activeBorderColor: activeBorderColor!,
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                Expanded(
-                  flex: 3,
-                  child: PatientFormField(
-                    editingController: birthDate,
-                    text: 'Date of birth',
-                    readOnly: true,
-                    activeBorderColor: activeBorderColor!,
-                    suffixIcon: IconButton(
-                      onPressed: () async {
-                        var date = await changeDate(context: context);
-                        setState(() {
-                          if (date != null) birthDate.text = date;
-                        });
-                      },
-                      icon: const Icon(
-                        Icons.arrow_drop_down,
-                        size: 26,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  flex: 2,
-                  child: PatientFormField(
-                    text: 'Gender',
-                    suffixIcon: DropDownMenu(
-                      hint: 'Gender',
-                      menuList: genderList,
-                      selectedItem: selectedGender,
-                      onChanged: (value) => setState(
-                        () => selectedGender = value.toString(),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            PatientFormField(
-              text: 'Nationality',
-              suffixIcon: DropDownMenu(
-                hint: 'Country',
-                menuList: countryList,
-                selectedItem: selectedCountry,
-                onChanged: (value) => setState(
-                  () => selectedCountry = value.toString(),
-                ),
-              ),
-            ),
-            const SizedBox(height: 10),
-            // result field
-            PatientFormField(
-              text: 'Result',
-              suffixIcon: DropDownMenu(
-                hint: 'Result',
-                menuList: resultList,
-                selectedItem: selectedResult,
-                onChanged: (value) => setState(
-                  () => selectedResult = value.toString(),
-                ),
-              ),
-            ),
-            const SizedBox(height: 10),
-            PatientFormField(
-              editingController: resultDate,
-              text: 'Result taken date',
-              activeBorderColor: const Color(0x55628ec5),
-              readOnly: true,
-            ),
-            const SizedBox(height: 10),
-            SizedBox(
-              height: 150,
-              child: Row(
-                children: [
-                  qrDataHolder.isEmpty
-                      ? const QrImageContainerEmpty()
-                      : QrImageContainerFull(
-                          qrDataHolder: qrDataHolder,
-                          firstName: firstName.text,
-                          lastName: lastName.text,
-                        ),
-                  const SizedBox(width: 20),
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 500),
-                          child: flag ? qrGenerateButton() : saveAndShareButtons(),
-                        ),
-                        const SizedBox(height: 15),
-                        const Text(
-                          'Make sure you shared it before saving it to the server.',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        Hero(
-                          tag: HeroTags.bigButton,
-                          child: BigButton(
-                            onPressed: registerPatientData,
-                            buttonColor: const Color(0xFF628ec5),
-                            text: const Text(
-                              'Save',
-                              style: TextStyle(fontSize: 16, letterSpacing: 1),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+    return Stack(
+      children: [
+        Container(
+          color: Colors.white,
         ),
-      ),
+        Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: Container(
+            height: 93,
+            decoration: BoxDecoration(
+              gradient: gradient1,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(50),
+                topRight: Radius.circular(50),
+              ),
+            ),
+          ),
+        ),
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: appBar(
+            backgroundColor: const Color(0xFF628ec5),
+            title: 'Patient form',
+          ),
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: PatientFormField(
+                        editingController: firstName,
+                        text: 'first name',
+                        hintText: 'enter first name',
+                        activeBorderColor: activeBorderColor!,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: PatientFormField(
+                        editingController: lastName,
+                        text: 'last name',
+                        hintText: 'enter last name',
+                        activeBorderColor: activeBorderColor!,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                PatientFormField(
+                  editingController: idNumber,
+                  text: 'identification code',
+                  hintText: 'passport or kebele id',
+                  activeBorderColor: activeBorderColor!,
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: PatientFormField(
+                        editingController: birthDate,
+                        text: 'Date of birth',
+                        readOnly: true,
+                        activeBorderColor: activeBorderColor!,
+                        suffixIcon: IconButton(
+                          onPressed: () async {
+                            var date = await changeDate(context: context);
+                            setState(() {
+                              if (date != null) birthDate.text = date;
+                            });
+                          },
+                          icon: const Icon(
+                            Icons.arrow_drop_down,
+                            size: 26,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      flex: 2,
+                      child: PatientFormField(
+                        text: 'Gender',
+                        suffixIcon: DropDownMenu(
+                          hint: 'Gender',
+                          menuList: genderList,
+                          selectedItem: selectedGender,
+                          onChanged: (value) => setState(
+                            () => selectedGender = value.toString(),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                PatientFormField(
+                  text: 'Nationality',
+                  suffixIcon: DropDownMenu(
+                    hint: 'Country',
+                    menuList: countryList,
+                    selectedItem: selectedCountry,
+                    onChanged: (value) => setState(
+                      () => selectedCountry = value.toString(),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                // result field
+                PatientFormField(
+                  text: 'Result',
+                  suffixIcon: DropDownMenu(
+                    hint: 'Result',
+                    menuList: resultList,
+                    selectedItem: selectedResult,
+                    onChanged: (value) => setState(
+                      () => selectedResult = value.toString(),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                PatientFormField(
+                  editingController: resultDate,
+                  text: 'Result taken date',
+                  activeBorderColor: const Color(0x55628ec5),
+                  readOnly: true,
+                ),
+                const SizedBox(height: 10),
+                SizedBox(
+                  height: 150,
+                  child: Row(
+                    children: [
+                      qrDataHolder.isEmpty
+                          ? const QrImageContainerEmpty()
+                          : QrImageContainerFull(
+                              qrDataHolder: qrDataHolder,
+                              firstName: firstName.text,
+                              lastName: lastName.text,
+                            ),
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 500),
+                              child: flag ? qrGenerateButton() : saveAndShareButtons(),
+                            ),
+                            const SizedBox(height: 15),
+                            const Text(
+                              'Make sure you shared it before saving it to the server.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            const SizedBox(height: 5),
+                            Hero(
+                              tag: HeroTags.bigButton,
+                              child: BigButton(
+                                onPressed: registerPatientData,
+                                buttonColor: const Color(0xFF628ec5),
+                                text: const Text(
+                                  'Save',
+                                  style: TextStyle(fontSize: 16, letterSpacing: 1),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -288,9 +312,11 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
                     firstName: firstName.text,
                     lastName: lastName.text,
                   );
-                  displayToast(
-                    message: 'Qr Image saved to gallery!',
-                    color: Colors.green[300],
+                  displaySnackBar(
+                    context: context,
+                    text: 'Qr Image saved to gallery!',
+                    backgroundColor: Colors.green[300],
+                    iconData: Icons.check,
                   );
                 }
                 changeLoadingState(null);
@@ -327,26 +353,26 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
 
   Future<void> _qrGenerateButtonAction() async {
     if (firstName.text.isEmpty || lastName.text.isEmpty) {
-      displayToast(message: "First or last name can't be empty.");
+      displaySnackBar(context: context, text: "First or last name can not be empty!");
     } else if (idNumber.text.isEmpty ||
         int.tryParse(idNumber.text) is! int ||
         idNumber.text.length < 4) {
       if (idNumber.text.isEmpty) {
-        displayToast(message: "Id number can't be empty.");
+        displaySnackBar(context: context, text: "Id number can't be empty.");
       } else if (idNumber.text.length < 4) {
-        displayToast(message: "Use 4 characters or more for your ID.");
+        displaySnackBar(context: context, text: "Use 4 characters or more for your ID.");
       } else {
-        displayToast(message: "Use only numbers for your ID");
+        displaySnackBar(context: context, text: "Use only numbers for your ID");
       }
     } else if (selectedGender == null) {
-      displayToast(message: 'Specify the gender please!');
+      displaySnackBar(context: context, text: 'Specify the gender please!');
     } else if (selectedCountry == null) {
-      displayToast(message: 'Specify the country please!');
+      displaySnackBar(context: context, text: 'Specify the country please!');
     } else if (selectedResult == null) {
-      displayToast(message: 'Specify the result please!');
+      displaySnackBar(context: context, text: 'Specify the result please!');
     } else {
       setState(() => loadingType = LoadingType.qrGenerateButton);
-      await Future.delayed(const Duration(milliseconds: 600));
+      await Future.delayed(const Duration(milliseconds: 800));
       setState(() {
         flag = false;
         loadingType = null;
@@ -359,7 +385,7 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
   Future<void> registerPatientData() async {
     EasyLoadingStyle.custom;
     if (qrDataHolder.isEmpty) {
-      displayToast(message: 'Generate qr code first please');
+      displaySnackBar(context: context, text: "QR Image is required!");
     } else {
       try {
         final result = await InternetAddress.lookup('google.com');
@@ -374,6 +400,7 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
             result: selectedResult!,
             resultTakenDate: "${today.day}-${today.month}-${today.year}",
           );
+
           var result = await DatabaseServices.mongoDb().singlePatientData(
             idNumber: idNumber.text,
           );
@@ -419,13 +446,13 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
           }
         }
       } on SocketException catch (_) {
-        displayToast(
-          message: 'No internet connection found!',
-          color: Colors.red[300],
+        displaySnackBar(
+          context: context,
+          text: 'No internet connection found!',
+          backgroundColor: Colors.red[300],
         );
       }
     }
-    var register = () {};
   }
 
   changeLoadingState(Enum? loadingButton) => setState(() => loadingType = loadingButton);

@@ -37,6 +37,7 @@ class _FullScreenQRViewState extends State<FullScreenQRView> {
       appBar: appBar(
         elevation: 0,
         leading: BackButton(color: textColor),
+        statusBarIconBrightness: Brightness.dark,
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,

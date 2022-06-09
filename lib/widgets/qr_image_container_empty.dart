@@ -9,7 +9,7 @@ class QrImageContainerEmpty extends StatelessWidget {
       height: 150,
       width: 150,
       decoration: BoxDecoration(
-        color: Colors.grey.withOpacity(0.15),
+        color: Colors.grey[200],
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
