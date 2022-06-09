@@ -11,6 +11,7 @@ import 'package:covid_result_app/widgets/patient_form_field.dart';
 import 'package:covid_result_app/widgets/text_widget_big.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 import '../services/auth_services/auth_services.dart';
 import '../services/db_services/database_services.dart';
@@ -61,9 +62,14 @@ class _HomeViewState extends State<HomeView> {
 
   final TextEditingController idNumber = TextEditingController();
 
+  final qrKey = GlobalKey(debugLabel: "QR");
+
+  QRViewController? controller;
+
   @override
   void dispose() {
     idNumber.clear();
+    controller?.dispose();
     super.dispose();
   }
 
@@ -261,7 +267,69 @@ class _HomeViewState extends State<HomeView> {
         });
   }
 
-  deletePatient() {}
+  Future<void> _deletePatientData(BuildContext context) async {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: PatientFormField(
+              editingController: idNumber,
+              hintText: 'Enter id number',
+              activeBorderColor: const Color(0x55b774bd),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text(
+                  "Cancel",
+                  style: TextStyle(color: secondaryColor),
+                ),
+              ),
+              TextButton(
+                onPressed: () async {
+                  await EasyLoading.show(status: 'Finding patient');
+                  var result = await DatabaseServices.mongoDb().singlePatientData(
+                    idNumber: idNumber.text,
+                  );
+
+                  if (result != OperationStatus.failed) {
+                    EasyLoading.dismiss();
+                    if (mounted) Navigator.of(context).pop();
+                    var success = await warningDialog(
+                      context: context,
+                      boxTitle: "Patinet found",
+                      boxDescription: "Name: ${result.fullName}",
+                      cancleText: "Cancel",
+                      okText: "Delete Data",
+                    );
+
+                    if (success && mounted) {
+                      await EasyLoading.show(status: 'Deleting patient');
+                      var res =
+                          await DatabaseServices.mongoDb().deletePatient(patientModel: result);
+
+                      if (res == OperationStatus.succeed) {
+                        await EasyLoading.showSuccess('Patient data deleted.');
+                      }
+                    }
+                  } else {
+                    await EasyLoading.showError('Patient not found!');
+                  }
+                },
+                child: Text(
+                  "Search",
+                  style: TextStyle(color: Colors.red.shade800),
+                ),
+              ),
+            ],
+          );
+        });
+  }
+
+  deletePatient() {
+    var shouldDelete = _deletePatientData(context);
+  }
+
   scanQrData() {}
 
   Future<void> popUpMenuHandler(value) async {

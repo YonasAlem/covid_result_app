@@ -28,4 +28,9 @@ class DatabaseServices implements DatabaseProvider {
   Future<OperationStatus> updatePatient({required PatientModel patientModel}) {
     return dbProvider.updatePatient(patientModel: patientModel);
   }
+
+  @override
+  Future<OperationStatus> deletePatient({required PatientModel patientModel}) {
+    return dbProvider.deletePatient(patientModel: patientModel);
+  }
 }

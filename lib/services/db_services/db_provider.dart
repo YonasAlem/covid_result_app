@@ -10,4 +10,5 @@ abstract class DatabaseProvider {
   Future singlePatientData({required String idNumber});
 
   Future<OperationStatus> updatePatient({required PatientModel patientModel});
+  Future<OperationStatus> deletePatient({required PatientModel patientModel});
 }

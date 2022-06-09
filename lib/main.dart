@@ -5,6 +5,7 @@ import 'package:covid_result_app/views/home_view.dart';
 import 'package:covid_result_app/views/patient_list_view.dart';
 import 'package:covid_result_app/views/patient_register_view.dart';
 import 'package:covid_result_app/views/patient_update_view.dart';
+import 'package:covid_result_app/views/qr_scanner_view.dart';
 import 'package:covid_result_app/views/verify_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -87,6 +88,13 @@ class MyApp extends StatelessWidget {
           case PatientUpdateView.routeName:
             return PageTransition(
               child: const PatientUpdateView(),
+              type: PageTransitionType.fade,
+              curve: Curves.easeIn,
+              settings: settings,
+            );
+          case QrScannerView.routeName:
+            return PageTransition(
+              child: const QrScannerView(),
               type: PageTransitionType.fade,
               curve: Curves.easeIn,
               settings: settings,

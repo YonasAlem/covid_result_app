@@ -54,4 +54,15 @@ class ApiProvider implements DatabaseProvider {
       return OperationStatus.failed;
     }
   }
+
+  @override
+  Future<OperationStatus> deletePatient({required PatientModel patientModel}) async {
+    final response = await http.delete(Uri.parse('$apiUri${patientModel.passportNumber}'));
+    // final Uri url = Uri.parse('$apiUri${patientModel.passportNumber}');
+    if (response.statusCode == 200) {
+      return OperationStatus.succeed;
+    } else {
+      return OperationStatus.failed;
+    }
+  }
 }
