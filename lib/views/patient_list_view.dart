@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:covid_result_app/methods/my_app_bar.dart';
 import 'package:covid_result_app/services/db_services/database_services.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +26,7 @@ class _PatientListViewState extends State<PatientListView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: appBar(
         backgroundColor: const Color(0xFFdb7634),
         title: "Patient's List",
@@ -33,7 +36,10 @@ class _PatientListViewState extends State<PatientListView> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final List<PatientModel> patientList = snapshot.data as List<PatientModel>;
-            return _buildPatientListView(patientList: patientList);
+
+            return patientList.isEmpty
+                ? _buildEmptyPatientList()
+                : _buildPatientListView(patientList: patientList);
           } else if (snapshot.hasError) {}
           return Container(
             height: double.maxFinite,
@@ -75,12 +81,34 @@ class _PatientListViewState extends State<PatientListView> {
     );
   }
 
+  Column _buildEmptyPatientList() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Image.asset(
+          'assets/images/empty.png',
+          height: 200,
+        ),
+        const Text(
+          'There is no data!',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Colors.grey,
+            fontSize: 16,
+          ),
+        ),
+      ],
+    );
+  }
+
   _buildPatientListView({required List<PatientModel> patientList}) {
     return ListView.builder(
       physics: const BouncingScrollPhysics(),
       itemCount: patientList.length,
       itemBuilder: (context, index) {
         final PatientModel patient = patientList[index];
+
         return ListTile(
           title: Text(patient.fullName),
           subtitle: Text(patient.dateOfBirth),
