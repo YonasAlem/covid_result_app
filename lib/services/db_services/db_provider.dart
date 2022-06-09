@@ -4,4 +4,6 @@ import '../../enums/operation_status.dart';
 
 abstract class DatabaseProvider {
   Future<OperationStatus> registerPatient({required PatientModel patientModel});
+
+  Future<List<PatientModel>> viewAllPatient();
 }

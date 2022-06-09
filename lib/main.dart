@@ -2,6 +2,7 @@ import 'package:covid_result_app/services/auth_services/auth_services.dart';
 import 'package:covid_result_app/services/auth_services/auth_user.dart';
 import 'package:covid_result_app/views/full_screen_qr_view.dart';
 import 'package:covid_result_app/views/home_view.dart';
+import 'package:covid_result_app/views/patient_list_view.dart';
 import 'package:covid_result_app/views/patient_register_view.dart';
 import 'package:covid_result_app/views/verify_view.dart';
 import 'package:flutter/material.dart';
@@ -76,6 +77,12 @@ class MyApp extends StatelessWidget {
               duration: const Duration(milliseconds: 500),
               curve: Curves.easeIn,
               settings: settings,
+            );
+          case PatientListView.routeName:
+            return PageTransition(
+              child: const PatientListView(),
+              type: PageTransitionType.rightToLeft,
+              curve: Curves.easeIn,
             );
           default:
             return null;

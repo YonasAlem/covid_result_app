@@ -13,4 +13,9 @@ class DatabaseServices implements DatabaseProvider {
   Future<OperationStatus> registerPatient({required PatientModel patientModel}) {
     return dbProvider.registerPatient(patientModel: patientModel);
   }
+
+  @override
+  Future<List<PatientModel>> viewAllPatient() {
+    return dbProvider.viewAllPatient();
+  }
 }

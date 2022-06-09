@@ -1,3 +1,5 @@
+import 'dart:convert' show json;
+
 import 'package:covid_result_app/models/patient_model.dart';
 import 'package:covid_result_app/services/db_services/db_provider.dart';
 import 'package:http/http.dart' as http;
@@ -17,6 +19,20 @@ class ApiProvider implements DatabaseProvider {
       return OperationStatus.succeed;
     } else {
       return OperationStatus.failed;
+    }
+  }
+
+  @override
+  Future<List<PatientModel>> viewAllPatient() async {
+    final response = await http.get(
+      Uri.parse('https://covid-result-tester.herokuapp.com/api/users/'),
+    );
+
+    if (response.statusCode == 200) {
+      final body = json.decode(response.body);
+      return body.map<PatientModel>(PatientModel.fromJson).toList();
+    } else {
+      throw Exception('Failed to load album');
     }
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:covid_result_app/utils/colors.dart';
+import 'package:covid_result_app/views/patient_list_view.dart';
 import 'package:covid_result_app/views/patient_register_view.dart';
 import 'package:covid_result_app/widgets/home_view_widgets/qr_scanner_button.dart';
 import 'package:covid_result_app/widgets/text_widget_big.dart';
@@ -135,7 +136,9 @@ class _HomeViewState extends State<HomeView> {
                   children: [
                     Expanded(
                       child: TaskButton(
-                        onTap: registerPatient,
+                        onTap: () => Navigator.of(context).pushNamed(
+                          PatientRegisterView.routeName,
+                        ),
                         color: const Color(0xFF628ec5),
                         icon: Icons.post_add,
                         title: 'Register',
@@ -159,7 +162,9 @@ class _HomeViewState extends State<HomeView> {
                   children: [
                     Expanded(
                       child: TaskButton(
-                        onTap: viewPatient,
+                        onTap: () => Navigator.of(context).pushNamed(
+                          PatientListView.routeName,
+                        ),
                         color: const Color(0xFFdb7634),
                         icon: Icons.view_list_rounded,
                         title: 'View All',
@@ -200,12 +205,7 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  registerPatient() {
-    Navigator.of(context).pushNamed(PatientRegisterView.routeName);
-  }
-
   updatePatient() {}
-  viewPatient() {}
   deletePatient() {}
   scanQrData() {}
 
