@@ -7,7 +7,8 @@ import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:screenshot/screenshot.dart';
 
 import '../enums/loading_type.dart';
-import '../methods/display_toast.dart';
+import '../methods/display_snackbar.dart';
+import '../methods/registerPatientData.dart';
 import '../methods/save_image_to_gallery.dart';
 import '../methods/share_image_to_others.dart';
 import '../methods/warning_dialog.dart';
@@ -32,89 +33,112 @@ class _FullScreenQRViewState extends State<FullScreenQRView> {
   @override
   Widget build(BuildContext context) {
     args = ModalRoute.of(context)!.settings.arguments as List;
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: appBar(
-        elevation: 0,
-        leading: BackButton(color: textColor),
-        statusBarIconBrightness: Brightness.dark,
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Center(
-                    child: Hero(
-                      tag: 'qr',
-                      child: PrettyQr(
-                        data: args[0],
-                        size: 320,
-                        roundEdges: true,
-                        errorCorrectLevel: QrErrorCorrectLevel.M,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 15),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'FULL NAME:  ',
-                      style: TextStyle(color: Colors.grey, fontSize: 12, letterSpacing: 1),
-                    ),
-                    Text(
-                      "${args[1].toString().toUpperCase()} ${args[2].toString().toUpperCase()}",
-                      style: TextStyle(
-                        fontSize: 18,
-                        letterSpacing: 1,
-                        color: textColor,
-                        backgroundColor: Colors.grey.withOpacity(0.3),
-                        fontFamily: 'Bold',
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-            child: saveAndShareButtons(),
-          ),
-          const SizedBox(height: 15),
-          const Text(
-            'Make sure you shared it before saving it to the server.',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey,
-            ),
-          ),
-          const SizedBox(height: 5),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20),
-            child: Hero(
-              tag: HeroTags.bigButton,
-              child: BigButton(
-                onPressed: () {},
-                buttonColor: const Color(0xFF628ec5),
-                text: const Text(
-                  'Save',
-                  style: TextStyle(fontSize: 16, letterSpacing: 1),
-                ),
+    return Stack(
+      children: [
+        Container(color: Colors.white),
+        Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: Container(
+            height: 93,
+            decoration: BoxDecoration(
+              gradient: gradient1,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(50),
+                topRight: Radius.circular(50),
               ),
             ),
           ),
-          const SizedBox(height: 15),
-        ],
-      ),
+        ),
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: appBar(
+            backgroundColor: const Color(0xFF628ec5),
+            title: 'Patient form',
+          ),
+          body: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Center(
+                      child: Hero(
+                        tag: 'qr',
+                        child: PrettyQr(
+                          data: args[0],
+                          size: 320,
+                          roundEdges: true,
+                          errorCorrectLevel: QrErrorCorrectLevel.M,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'FULL NAME:  ',
+                        style: TextStyle(color: Colors.grey, fontSize: 12, letterSpacing: 1),
+                      ),
+                      Text(
+                        args[1].fullName,
+                        style: TextStyle(
+                          fontSize: 18,
+                          letterSpacing: 1,
+                          color: textColor,
+                          backgroundColor: Colors.grey.withOpacity(0.3),
+                          fontFamily: 'Bold',
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+                child: saveAndShareButtons(),
+              ),
+              const SizedBox(height: 15),
+              const Text(
+                'Make sure you shared it before saving it to the server.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 5),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                child: Hero(
+                  tag: HeroTags.bigButton,
+                  child: BigButton(
+                    onPressed: () async {
+                      await registerPatientData(
+                        context,
+                        qrDataHolder: args[0],
+                        patientModel: args[1],
+                      );
+                    },
+                    buttonColor: const Color(0xFF628ec5),
+                    text: const Text(
+                      'Save',
+                      style: TextStyle(fontSize: 16, letterSpacing: 1),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 15),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -141,9 +165,11 @@ class _FullScreenQRViewState extends State<FullScreenQRView> {
                     firstName: args[1].toString().trim().toUpperCase(),
                     lastName: args[2].toString().trim().toUpperCase(),
                   );
-                  displayToast(
-                    message: 'Qr Image saved to gallery!',
-                    color: Colors.green[300],
+                  displaySnackBar(
+                    context: context,
+                    text: 'Qr Image saved to gallery!',
+                    backgroundColor: Colors.green[300],
+                    iconData: Icons.check,
                   );
                 }
                 changeLoadingState(null);

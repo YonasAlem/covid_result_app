@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:covid_result_app/enums/hero_tags.dart';
 import 'package:covid_result_app/enums/loading_type.dart';
@@ -16,6 +17,7 @@ import 'package:screenshot/screenshot.dart';
 
 import '../enums/operation_status.dart';
 import '../methods/change_date.dart';
+import '../methods/registerPatientData.dart';
 import '../methods/save_image_to_gallery.dart';
 import '../models/patient_model.dart';
 import '../utils/colors.dart';
@@ -58,6 +60,7 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
   Color? activeBorderColor;
   bool easyLoading = false;
   Enum? loadingType;
+  bool isFullScreenModeOn = false;
 
   @override
   void initState() {
@@ -229,8 +232,15 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
                           ? const QrImageContainerEmpty()
                           : QrImageContainerFull(
                               qrDataHolder: qrDataHolder,
-                              firstName: firstName.text,
-                              lastName: lastName.text,
+                              patientModel: PatientModel(
+                                fullName: '${firstName.text.trim()} ${lastName.text.trim()}',
+                                passportNumber: idNumber.text.trim(),
+                                dateOfBirth: birthDate.text,
+                                gender: selectedGender!,
+                                nationality: selectedCountry!,
+                                result: selectedResult!,
+                                resultTakenDate: "${today.day}-${today.month}-${today.year}",
+                              ),
                             ),
                       const SizedBox(width: 20),
                       Expanded(
@@ -254,7 +264,30 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
                             Hero(
                               tag: HeroTags.bigButton,
                               child: BigButton(
-                                onPressed: registerPatientData,
+                                onPressed: () async {
+                                  if (qrDataHolder.isEmpty) {
+                                    displaySnackBar(
+                                      context: context,
+                                      text: "QR Image is required!",
+                                    );
+                                  } else {
+                                    await registerPatientData(
+                                      context,
+                                      qrDataHolder: qrDataHolder,
+                                      patientModel: PatientModel(
+                                        fullName:
+                                            '${firstName.text.trim()} ${lastName.text.trim()}',
+                                        passportNumber: idNumber.text.trim(),
+                                        dateOfBirth: birthDate.text,
+                                        gender: selectedGender!,
+                                        nationality: selectedCountry!,
+                                        result: selectedResult!,
+                                        resultTakenDate:
+                                            "${today.day}-${today.month}-${today.year}",
+                                      ),
+                                    );
+                                  }
+                                },
                                 buttonColor: const Color(0xFF628ec5),
                                 text: const Text(
                                   'Save',
@@ -382,7 +415,7 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
     }
   }
 
-  Future<void> registerPatientData() async {
+  Future<void> registerPatientDatas() async {
     EasyLoadingStyle.custom;
     if (qrDataHolder.isEmpty) {
       displaySnackBar(context: context, text: "QR Image is required!");

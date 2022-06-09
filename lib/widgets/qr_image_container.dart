@@ -1,3 +1,4 @@
+import 'package:covid_result_app/models/patient_model.dart';
 import 'package:flutter/material.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 
@@ -7,20 +8,18 @@ class QrImageContainerFull extends StatelessWidget {
   const QrImageContainerFull({
     Key? key,
     required this.qrDataHolder,
-    required this.firstName,
-    required this.lastName,
+    required this.patientModel,
   }) : super(key: key);
 
   final String qrDataHolder;
-  final String firstName;
-  final String lastName;
+  final PatientModel patientModel;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () => Navigator.of(context).pushNamed(
         FullScreenQRView.routeName,
-        arguments: [qrDataHolder, firstName, lastName],
+        arguments: [qrDataHolder, patientModel],
       ),
       child: Hero(
         tag: 'qr',
