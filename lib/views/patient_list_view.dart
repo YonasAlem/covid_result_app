@@ -1,8 +1,7 @@
-import 'dart:developer';
-
 import 'package:covid_result_app/methods/my_app_bar.dart';
 import 'package:covid_result_app/methods/warning_dialog.dart';
 import 'package:covid_result_app/services/db_services/database_services.dart';
+import 'package:covid_result_app/views/patient_update_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
@@ -155,6 +154,12 @@ class _PatientListViewState extends State<PatientListView> {
                       cancleText: "Cancel",
                       okText: "Update",
                     );
+                    if (shouldUpdate && mounted) {
+                      Navigator.of(context).pushNamed(
+                        PatientUpdateView.routeName,
+                        arguments: patient,
+                      );
+                    }
                   },
                   constraints: const BoxConstraints(),
                   icon: Image.asset(
