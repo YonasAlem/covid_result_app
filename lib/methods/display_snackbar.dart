@@ -12,7 +12,7 @@ displaySnackBar({
       SnackBar(
         duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
-        backgroundColor: backgroundColor ?? Colors.black45,
+        backgroundColor: backgroundColor ?? Colors.black54,
         margin: const EdgeInsets.only(bottom: 20, left: 30, right: 30),
         elevation: 0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),

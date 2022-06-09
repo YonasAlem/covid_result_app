@@ -1,14 +1,19 @@
 import 'dart:io';
 
+import 'package:covid_result_app/enums/operation_status.dart';
 import 'package:covid_result_app/methods/my_app_bar.dart';
 import 'package:covid_result_app/utils/colors.dart';
 import 'package:covid_result_app/views/patient_list_view.dart';
 import 'package:covid_result_app/views/patient_register_view.dart';
+import 'package:covid_result_app/views/patient_update_view.dart';
 import 'package:covid_result_app/widgets/home_view_widgets/qr_scanner_button.dart';
+import 'package:covid_result_app/widgets/patient_form_field.dart';
 import 'package:covid_result_app/widgets/text_widget_big.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 import '../services/auth_services/auth_services.dart';
+import '../services/db_services/database_services.dart';
 import '../widgets/home_view_widgets/task_button.dart';
 import '../methods/warning_dialog.dart';
 import 'login_view.dart';
@@ -54,13 +59,19 @@ class _HomeViewState extends State<HomeView> {
     ),
   ];
 
+  final TextEditingController idNumber = TextEditingController();
+
+  @override
+  void dispose() {
+    idNumber.clear();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Container(
-          color: Colors.white,
-        ),
+        Container(color: Colors.white),
         Positioned(
           bottom: 0,
           left: 0,
@@ -191,7 +202,65 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  updatePatient() {}
+  updatePatient() async {
+    var shouldUpdate = _displayTextInputDialog(context);
+  }
+
+  Future<void> _displayTextInputDialog(BuildContext context) async {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: PatientFormField(
+              editingController: idNumber,
+              hintText: 'Enter id number',
+              activeBorderColor: const Color(0x55b774bd),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text(
+                  "Cancel",
+                  style: TextStyle(color: secondaryColor),
+                ),
+              ),
+              TextButton(
+                onPressed: () async {
+                  await EasyLoading.show(status: 'Finding patient');
+                  var result = await DatabaseServices.mongoDb().singlePatientData(
+                    idNumber: idNumber.text,
+                  );
+
+                  if (result != OperationStatus.failed) {
+                    await EasyLoading.showSuccess('Patient found!');
+                    var success = await warningDialog(
+                      context: context,
+                      boxTitle: "Patinet found",
+                      boxDescription: "Name: ${result.fullName}",
+                      cancleText: "Cancel",
+                      okText: "Goto Update Page",
+                    );
+
+                    if (success && mounted) {
+                      Navigator.of(context).pushReplacementNamed(
+                        PatientUpdateView.routeName,
+                        arguments: result,
+                      );
+                    }
+                  } else {
+                    await EasyLoading.showError('Patient not found!');
+                  }
+                },
+                child: Text(
+                  "Search",
+                  style: TextStyle(color: Colors.red.shade800),
+                ),
+              ),
+            ],
+          );
+        });
+  }
+
   deletePatient() {}
   scanQrData() {}
 

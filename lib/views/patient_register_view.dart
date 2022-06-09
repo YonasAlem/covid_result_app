@@ -94,243 +94,219 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
   @override
   Widget build(BuildContext context) {
     setActiveBorderColor();
-    return Stack(
-      children: [
-        Container(
-          color: Colors.white,
-        ),
-        Positioned(
-          bottom: 0,
-          left: 0,
-          right: 0,
-          child: Container(
-            height: 93,
-            decoration: BoxDecoration(
-              gradient: gradient1,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(50),
-                topRight: Radius.circular(50),
-              ),
-            ),
-          ),
-        ),
-        Scaffold(
-          backgroundColor: Colors.transparent,
-          appBar: appBar(
-            backgroundColor: const Color(0xFF628ec5),
-            title: 'Patient form',
-          ),
-          body: SingleChildScrollView(
-            padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
-            child: Column(
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: appBar(
+        backgroundColor: const Color(0xFF628ec5),
+        title: 'Patient form',
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
+        child: Column(
+          children: [
+            Row(
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: PatientFormField(
-                        editingController: firstName,
-                        text: 'first name',
-                        hintText: 'enter first name',
-                        activeBorderColor: activeBorderColor!,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: PatientFormField(
-                        editingController: lastName,
-                        text: 'last name',
-                        hintText: 'enter last name',
-                        activeBorderColor: activeBorderColor!,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                PatientFormField(
-                  editingController: idNumber,
-                  text: 'identification code',
-                  hintText: 'passport or kebele id',
-                  activeBorderColor: activeBorderColor!,
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 3,
-                      child: PatientFormField(
-                        editingController: birthDate,
-                        text: 'Date of birth',
-                        readOnly: true,
-                        activeBorderColor: activeBorderColor!,
-                        suffixIcon: IconButton(
-                          onPressed: () async {
-                            var date = await changeDate(context: context);
-                            setState(() {
-                              if (date != null) birthDate.text = date;
-                            });
-                          },
-                          icon: const Icon(
-                            Icons.arrow_drop_down,
-                            size: 26,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      flex: 2,
-                      child: PatientFormField(
-                        text: 'Gender',
-                        suffixIcon: DropDownMenu(
-                          hint: 'Gender',
-                          menuList: genderList,
-                          selectedItem: selectedGender,
-                          onChanged: (value) => setState(
-                            () => selectedGender = value.toString(),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                PatientFormField(
-                  text: 'Nationality',
-                  suffixIcon: DropDownMenu(
-                    hint: 'Country',
-                    menuList: countryList,
-                    selectedItem: selectedCountry,
-                    onChanged: (value) => setState(
-                      () => selectedCountry = value.toString(),
-                    ),
+                Expanded(
+                  child: PatientFormField(
+                    editingController: firstName,
+                    text: 'first name',
+                    hintText: 'enter first name',
+                    activeBorderColor: activeBorderColor!,
                   ),
                 ),
-                const SizedBox(height: 10),
-                // result field
-                PatientFormField(
-                  text: 'Result',
-                  suffixIcon: DropDownMenu(
-                    hint: 'Result',
-                    menuList: resultList,
-                    selectedItem: selectedResult,
-                    onChanged: (value) => setState(
-                      () => selectedResult = value.toString(),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                PatientFormField(
-                  editingController: resultDate,
-                  text: 'Result taken date',
-                  activeBorderColor: const Color(0x55628ec5),
-                  readOnly: true,
-                ),
-                const SizedBox(height: 10),
-                SizedBox(
-                  height: 150,
-                  child: Row(
-                    children: [
-                      qrDataHolder.isEmpty
-                          ? const QrImageContainerEmpty()
-                          : InkWell(
-                              onTap: () async {
-                                var result = await Navigator.of(context).pushNamed(
-                                  FullScreenQRView.routeName,
-                                  arguments: [
-                                    qrDataHolder,
-                                    PatientModel(
-                                      fullName:
-                                          '${firstName.text.trim()} ${lastName.text.trim()}',
-                                      passportNumber: idNumber.text.trim(),
-                                      dateOfBirth: birthDate.text,
-                                      gender: selectedGender!,
-                                      nationality: selectedCountry!,
-                                      result: selectedResult!,
-                                      resultTakenDate:
-                                          "${today.day}-${today.month}-${today.year}",
-                                    ),
-                                  ],
-                                ) as bool;
-                                if (result) resetDataEntry();
-                              },
-                              child: Hero(
-                                tag: 'qr',
-                                child: Column(
-                                  children: [
-                                    PrettyQr(
-                                      size: 150,
-                                      data: qrDataHolder,
-                                      roundEdges: true,
-                                      errorCorrectLevel: QrErrorCorrectLevel.M,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                      const SizedBox(width: 20),
-                      Expanded(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 500),
-                              child: flag ? qrGenerateButton() : saveAndShareButtons(),
-                            ),
-                            const SizedBox(height: 15),
-                            const Text(
-                              'Make sure you shared it before saving it to the server.',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey,
-                              ),
-                            ),
-                            const SizedBox(height: 5),
-                            Hero(
-                              tag: HeroTags.bigButton,
-                              child: BigButton(
-                                onPressed: () async {
-                                  if (qrDataHolder.isEmpty) {
-                                    displaySnackBar(
-                                      context: context,
-                                      text: "QR Image is required!",
-                                    );
-                                  } else {
-                                    await registerPatientData(
-                                      context,
-                                      patientModel: PatientModel(
-                                        fullName:
-                                            '${firstName.text.trim()} ${lastName.text.trim()}',
-                                        passportNumber: idNumber.text.trim(),
-                                        dateOfBirth: birthDate.text,
-                                        gender: selectedGender!,
-                                        nationality: selectedCountry!,
-                                        result: selectedResult!,
-                                        resultTakenDate:
-                                            "${today.day}-${today.month}-${today.year}",
-                                      ),
-                                    );
-                                    resetDataEntry();
-                                  }
-                                },
-                                buttonColor: const Color(0xFF628ec5),
-                                text: const Text(
-                                  'Save',
-                                  style: TextStyle(fontSize: 16, letterSpacing: 1),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                const SizedBox(width: 10),
+                Expanded(
+                  child: PatientFormField(
+                    editingController: lastName,
+                    text: 'last name',
+                    hintText: 'enter last name',
+                    activeBorderColor: activeBorderColor!,
                   ),
                 ),
               ],
             ),
-          ),
+            const SizedBox(height: 10),
+            PatientFormField(
+              editingController: idNumber,
+              text: 'identification code',
+              hintText: 'passport or kebele id',
+              activeBorderColor: activeBorderColor!,
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: PatientFormField(
+                    editingController: birthDate,
+                    text: 'Date of birth',
+                    readOnly: true,
+                    activeBorderColor: activeBorderColor!,
+                    suffixIcon: IconButton(
+                      onPressed: () async {
+                        var date = await changeDate(context: context);
+                        setState(() {
+                          if (date != null) birthDate.text = date;
+                        });
+                      },
+                      icon: const Icon(
+                        Icons.arrow_drop_down,
+                        size: 26,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  flex: 2,
+                  child: PatientFormField(
+                    text: 'Gender',
+                    suffixIcon: DropDownMenu(
+                      hint: 'Gender',
+                      menuList: genderList,
+                      selectedItem: selectedGender,
+                      onChanged: (value) => setState(
+                        () => selectedGender = value.toString(),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            PatientFormField(
+              text: 'Nationality',
+              suffixIcon: DropDownMenu(
+                hint: 'Country',
+                menuList: countryList,
+                selectedItem: selectedCountry,
+                onChanged: (value) => setState(
+                  () => selectedCountry = value.toString(),
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            // result field
+            PatientFormField(
+              text: 'Result',
+              suffixIcon: DropDownMenu(
+                hint: 'Result',
+                menuList: resultList,
+                selectedItem: selectedResult,
+                onChanged: (value) => setState(
+                  () => selectedResult = value.toString(),
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            PatientFormField(
+              editingController: resultDate,
+              text: 'Result taken date',
+              activeBorderColor: const Color(0x55628ec5),
+              readOnly: true,
+            ),
+            const SizedBox(height: 10),
+            SizedBox(
+              height: 150,
+              child: Row(
+                children: [
+                  qrDataHolder.isEmpty
+                      ? const QrImageContainerEmpty()
+                      : InkWell(
+                          onTap: () async {
+                            var result = await Navigator.of(context).pushNamed(
+                              FullScreenQRView.routeName,
+                              arguments: [
+                                qrDataHolder,
+                                PatientModel(
+                                  fullName: '${firstName.text.trim()} ${lastName.text.trim()}',
+                                  passportNumber: idNumber.text.trim(),
+                                  dateOfBirth: birthDate.text,
+                                  gender: selectedGender!,
+                                  nationality: selectedCountry!,
+                                  result: selectedResult!,
+                                  resultTakenDate: "${today.day}-${today.month}-${today.year}",
+                                ),
+                              ],
+                            ) as bool;
+                            if (result) resetDataEntry();
+                          },
+                          child: Hero(
+                            tag: 'qr',
+                            child: Column(
+                              children: [
+                                PrettyQr(
+                                  size: 150,
+                                  data: qrDataHolder,
+                                  roundEdges: true,
+                                  errorCorrectLevel: QrErrorCorrectLevel.M,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                  const SizedBox(width: 20),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 500),
+                          child: flag ? qrGenerateButton() : saveAndShareButtons(),
+                        ),
+                        const SizedBox(height: 15),
+                        const Text(
+                          'Make sure you shared it before saving it to the server.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        Hero(
+                          tag: HeroTags.bigButton,
+                          child: BigButton(
+                            onPressed: () async {
+                              if (qrDataHolder.isEmpty) {
+                                displaySnackBar(
+                                  context: context,
+                                  text: "QR Image is required!",
+                                );
+                              } else {
+                                await registerPatientData(
+                                  context,
+                                  patientModel: PatientModel(
+                                    fullName:
+                                        '${firstName.text.trim()} ${lastName.text.trim()}',
+                                    passportNumber: idNumber.text.trim(),
+                                    dateOfBirth: birthDate.text,
+                                    gender: selectedGender!,
+                                    nationality: selectedCountry!,
+                                    result: selectedResult!,
+                                    resultTakenDate:
+                                        "${today.day}-${today.month}-${today.year}",
+                                  ),
+                                );
+                                resetDataEntry();
+                              }
+                            },
+                            buttonColor: const Color(0xFF628ec5),
+                            text: const Text(
+                              'Save',
+                              style: TextStyle(fontSize: 16, letterSpacing: 1),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 

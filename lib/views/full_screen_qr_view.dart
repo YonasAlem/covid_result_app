@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:covid_result_app/enums/hero_tags.dart';
 import 'package:covid_result_app/methods/my_app_bar.dart';
 import 'package:covid_result_app/utils/colors.dart';
@@ -35,116 +33,96 @@ class _FullScreenQRViewState extends State<FullScreenQRView> {
   @override
   Widget build(BuildContext context) {
     args = ModalRoute.of(context)!.settings.arguments as List;
-    return Stack(
-      children: [
-        Container(color: Colors.white),
-        Positioned(
-          bottom: 0,
-          left: 0,
-          right: 0,
-          child: Container(
-            height: 93,
-            decoration: BoxDecoration(
-              gradient: gradient1,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(50),
-                topRight: Radius.circular(50),
-              ),
-            ),
-          ),
-        ),
-        Scaffold(
-          backgroundColor: Colors.transparent,
-          appBar: appBar(
-            backgroundColor: const Color(0xFF628ec5),
-            title: 'Patient form',
-          ),
-          body: Column(
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: appBar(
+        backgroundColor: const Color(0xFF628ec5),
+        title: 'Patient form',
+      ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Center(
-                      child: Hero(
-                        tag: 'qr',
-                        child: PrettyQr(
-                          data: args[0],
-                          size: 320,
-                          roundEdges: true,
-                          errorCorrectLevel: QrErrorCorrectLevel.M,
-                        ),
-                      ),
+              GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: Center(
+                  child: Hero(
+                    tag: 'qr',
+                    child: PrettyQr(
+                      data: args[0],
+                      size: 320,
+                      roundEdges: true,
+                      errorCorrectLevel: QrErrorCorrectLevel.M,
                     ),
                   ),
-                  const SizedBox(height: 15),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'FULL NAME:  ',
-                        style: TextStyle(color: Colors.grey, fontSize: 12, letterSpacing: 1),
-                      ),
-                      Text(
-                        args[1].fullName.toUpperCase(),
-                        style: TextStyle(
-                          fontSize: 18,
-                          letterSpacing: 1,
-                          color: textColor,
-                          backgroundColor: Colors.grey.withOpacity(0.3),
-                          fontFamily: 'Bold',
-                        ),
-                      ),
-                    ],
+                ),
+              ),
+              const SizedBox(height: 15),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'FULL NAME:  ',
+                    style: TextStyle(color: Colors.grey, fontSize: 12, letterSpacing: 1),
+                  ),
+                  Text(
+                    args[1].fullName.toUpperCase(),
+                    style: TextStyle(
+                      fontSize: 18,
+                      letterSpacing: 1,
+                      color: textColor,
+                      backgroundColor: Colors.grey.withOpacity(0.3),
+                      fontFamily: 'Bold',
+                    ),
                   ),
                 ],
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-                child: saveAndShareButtons(),
-              ),
-              const SizedBox(height: 15),
-              const Text(
-                'Make sure you shared it before saving it to the server.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey,
-                ),
-              ),
-              const SizedBox(height: 5),
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 20),
-                child: Hero(
-                  tag: HeroTags.bigButton,
-                  child: BigButton(
-                    onPressed: () async {
-                      var result = await registerPatientData(
-                        context,
-                        patientModel: args[1],
-                      );
-                      if (result == true && mounted) {
-                        Navigator.of(context).pop(true);
-                      } else {
-                        Navigator.of(context).pop(false);
-                      }
-                    },
-                    buttonColor: const Color(0xFF628ec5),
-                    text: const Text(
-                      'Save',
-                      style: TextStyle(fontSize: 16, letterSpacing: 1),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 15),
             ],
           ),
-        ),
-      ],
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+            child: saveAndShareButtons(),
+          ),
+          const SizedBox(height: 15),
+          const Text(
+            'Make sure you shared it before saving it to the server.',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey,
+            ),
+          ),
+          const SizedBox(height: 5),
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20),
+            child: Hero(
+              tag: HeroTags.bigButton,
+              child: BigButton(
+                onPressed: () async {
+                  var result = await registerPatientData(
+                    context,
+                    patientModel: args[1],
+                  );
+                  if (result == true && mounted) {
+                    Navigator.of(context).pop(true);
+                  } else {
+                    Navigator.of(context).pop(false);
+                  }
+                },
+                buttonColor: const Color(0xFF628ec5),
+                text: const Text(
+                  'Save',
+                  style: TextStyle(fontSize: 16, letterSpacing: 1),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 15),
+        ],
+      ),
     );
   }
 
