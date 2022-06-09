@@ -18,4 +18,9 @@ class DatabaseServices implements DatabaseProvider {
   Future<List<PatientModel>> viewAllPatient() {
     return dbProvider.viewAllPatient();
   }
+
+  @override
+  Future singlePatientData({required String idNumber}) {
+    return dbProvider.singlePatientData(idNumber: idNumber);
+  }
 }

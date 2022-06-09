@@ -35,7 +35,7 @@ class PatientModel {
       gender: json['sex'],
       nationality: json['nationality'],
       result: json['result'],
-      resultTakenDate: json['resultDate'],
+      resultTakenDate: json['createdAt'],
     );
   }
 

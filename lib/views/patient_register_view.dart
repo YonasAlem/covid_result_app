@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:covid_result_app/enums/hero_tags.dart';
 import 'package:covid_result_app/enums/loading_type.dart';
@@ -42,6 +43,7 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
   final ScreenshotController screenshotController = ScreenshotController();
 
   DateTime today = DateTime.now();
+  DateTime? resultTakenDate;
 
   List<String> genderList = ['Male', 'Female'];
   String? selectedGender;
@@ -61,7 +63,10 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
     birthDate.text = '${today.day} / ${today.month} / ${today.year}';
     resultDate.text = '${today.day} / ${today.month} / ${today.year}';
 
-    idNumber.addListener(() => setState(() => qrDataHolder = ''));
+    idNumber.addListener(() => setState(() {
+          flag = true;
+          qrDataHolder = '';
+        }));
 
     super.initState();
   }
@@ -192,18 +197,6 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
               text: 'Result taken date',
               activeBorderColor: const Color(0x55628ec5),
               readOnly: true,
-              suffixIcon: IconButton(
-                onPressed: () async {
-                  final date = await changeDate(context: context);
-                  setState(() async {
-                    if (date != null) resultDate.text = date;
-                  });
-                },
-                icon: const Icon(
-                  Icons.arrow_drop_down,
-                  size: 26,
-                ),
-              ),
             ),
             const SizedBox(height: 10),
             SizedBox(
@@ -341,16 +334,16 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
       if (idNumber.text.isEmpty) {
         displayToast(message: "Id number can't be empty.");
       } else if (idNumber.text.length < 4) {
-        displayToast(message: "Id number can't hold less than 4 numbers.");
+        displayToast(message: "Use 4 characters or more for your ID.");
       } else {
-        displayToast(message: "Id number can't hold Strings or doubles, Try using numbers");
+        displayToast(message: "Use only numbers for your ID");
       }
     } else if (selectedGender == null) {
-      displayToast(message: 'Select a gender please');
+      displayToast(message: 'Specify the gender please!');
     } else if (selectedCountry == null) {
-      displayToast(message: 'Select a country please');
+      displayToast(message: 'Specify the country please!');
     } else if (selectedResult == null) {
-      displayToast(message: 'Select a result please');
+      displayToast(message: 'Specify the result please!');
     } else {
       setState(() => loadingType = LoadingType.qrGenerateButton);
       await Future.delayed(const Duration(milliseconds: 600));
@@ -372,22 +365,57 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
         final result = await InternetAddress.lookup('google.com');
         if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
           await EasyLoading.show(status: 'Saving patient data');
-          OperationStatus newResult = await DatabaseServices.mongoDb().registerPatient(
-            patientModel: PatientModel(
-              fullName: '${firstName.text.trim()} ${lastName.text.trim()}',
-              passportNumber: idNumber.text.trim(),
-              dateOfBirth: birthDate.text,
-              gender: selectedGender!,
-              nationality: selectedCountry!,
-              result: selectedResult!,
-              resultTakenDate: resultDate.text,
-            ),
+          PatientModel patientModel = PatientModel(
+            fullName: '${firstName.text.trim()} ${lastName.text.trim()}',
+            passportNumber: idNumber.text.trim(),
+            dateOfBirth: birthDate.text,
+            gender: selectedGender!,
+            nationality: selectedCountry!,
+            result: selectedResult!,
+            resultTakenDate: "${today.day}-${today.month}-${today.year}",
           );
-          if (newResult == OperationStatus.succeed) {
-            await EasyLoading.showSuccess('Data saved successfully.');
-            resetDataEntry();
+          var result = await DatabaseServices.mongoDb().singlePatientData(
+            idNumber: idNumber.text,
+          );
+
+          if (result == OperationStatus.failed) {
+            OperationStatus newResult = await DatabaseServices.mongoDb().registerPatient(
+              patientModel: patientModel,
+            );
+            if (newResult == OperationStatus.succeed) {
+              await EasyLoading.showSuccess('Data saved successfully.');
+              resetDataEntry();
+            } else {
+              await EasyLoading.showError('There is a problem, please try again!');
+            }
           } else {
-            await EasyLoading.showError('There is a problem, please try again!');
+            var from = DateTime.parse(result.resultTakenDate);
+            var to = today;
+
+            final dateDifference = (to.difference(from).inHours / 24).round();
+            if (patientModel.fullName != result.fullName ||
+                patientModel.gender != result.gender ||
+                patientModel.nationality != result.nationality) {
+              await EasyLoading.showError(
+                'This ID belongs to another patient, Please use another one, OR make sure you put the data correctly!',
+                duration: const Duration(seconds: 2),
+              );
+            } else if (dateDifference < 14) {
+              await EasyLoading.showError(
+                'This patient already taken the test, Should be more than 14 days to take a test again.',
+                duration: const Duration(seconds: 2),
+              );
+            } else {
+              OperationStatus newResult = await DatabaseServices.mongoDb().registerPatient(
+                patientModel: patientModel,
+              );
+              if (newResult == OperationStatus.succeed) {
+                await EasyLoading.showSuccess('Data saved successfully.');
+                resetDataEntry();
+              } else {
+                await EasyLoading.showError('There is a problem, please try again!');
+              }
+            }
           }
         }
       } on SocketException catch (_) {
@@ -397,6 +425,7 @@ class _PatientRegisterViewState extends State<PatientRegisterView> {
         );
       }
     }
+    var register = () {};
   }
 
   changeLoadingState(Enum? loadingButton) => setState(() => loadingType = loadingButton);

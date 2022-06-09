@@ -9,6 +9,6 @@ changeDate({required BuildContext context}) async {
     lastDate: DateTime(2025),
   );
   if (selected != null && selected != now) {
-    return "${selected.day} / ${selected.month} / ${selected.year}";
+    return "${selected.day}-${selected.month}-${selected.year}";
   }
 }

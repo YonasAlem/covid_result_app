@@ -6,4 +6,6 @@ abstract class DatabaseProvider {
   Future<OperationStatus> registerPatient({required PatientModel patientModel});
 
   Future<List<PatientModel>> viewAllPatient();
+
+  Future singlePatientData({required String idNumber});
 }
