@@ -110,10 +110,177 @@ class _PatientListViewState extends State<PatientListView> {
         final PatientModel patient = patientList[index];
 
         return ListTile(
-          title: Text(patient.fullName),
-          subtitle: Text(patient.dateOfBirth),
+          onTap: () => singleListItem(patient: patient),
+          leading: Container(
+            margin: const EdgeInsets.all(5),
+            child: Image.asset(
+              patient.gender == 'Male' ? 'assets/images/male.png' : 'assets/images/female.png',
+              height: 35,
+            ),
+          ),
+          title: Text(
+            patient.fullName.toUpperCase(),
+            style: const TextStyle(letterSpacing: 1),
+          ),
+          subtitle: Row(
+            children: [
+              Text(
+                'Birthdate: ',
+                style: TextStyle(color: Colors.grey[300], fontSize: 12),
+              ),
+              Text(
+                patient.dateOfBirth,
+                style: const TextStyle(letterSpacing: 1, color: Colors.grey),
+              ),
+            ],
+          ),
+          trailing: Container(
+            decoration: BoxDecoration(
+              color: const Color(0xFFdb7634),
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: IconButton(
+              onPressed: () {},
+              constraints: const BoxConstraints(),
+              icon: Image.asset(
+                'assets/images/edit.png',
+                height: 35,
+              ),
+            ),
+          ),
         );
       },
+    );
+  }
+
+  singleListItem({required PatientModel patient}) {
+    showModalBottomSheet(
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+        ),
+        context: context,
+        builder: (context) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(
+                decoration: const BoxDecoration(
+                  color: Color(0xFFdb7634),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 20),
+                    Image.asset(
+                      patient.gender == 'Male'
+                          ? 'assets/images/male.png'
+                          : 'assets/images/female.png',
+                      height: 45,
+                      color: Colors.white,
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      patient.fullName.toUpperCase(),
+                      style: const TextStyle(
+                        fontSize: 18,
+                        letterSpacing: 1,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      'ID: @${patient.passportNumber}',
+                      style: const TextStyle(
+                        fontSize: 15,
+                        letterSpacing: 1,
+                        color: Colors.white54,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        TypeAndValueWidget(title: 'Result', value: patient.result),
+                        const SizedBox(width: 20),
+                        TypeAndValueWidget(
+                          title: 'Result taken date',
+                          value: patient.resultTakenDate.split('T')[0],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        TypeAndValueWidget(title: 'Gender', value: patient.gender),
+                        const SizedBox(width: 20),
+                        TypeAndValueWidget(title: 'Date of birth', value: patient.dateOfBirth)
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        });
+  }
+}
+
+class TypeAndValueWidget extends StatelessWidget {
+  const TypeAndValueWidget({
+    Key? key,
+    required this.title,
+    required this.value,
+  }) : super(key: key);
+
+  final String title;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(color: Colors.grey),
+          ),
+          Container(
+            height: 45,
+            width: double.maxFinite,
+            decoration: BoxDecoration(
+              color: Colors.orange[50],
+              borderRadius: BorderRadius.circular(10),
+            ),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 10,
+            ),
+            child: Center(
+              child: Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 18,
+                  letterSpacing: 1,
+                  color: Colors.grey,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
