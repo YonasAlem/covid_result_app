@@ -6,6 +6,7 @@ import 'package:covid_result_app/utils/colors.dart';
 import 'package:covid_result_app/views/patient_list_view.dart';
 import 'package:covid_result_app/views/patient_register_view.dart';
 import 'package:covid_result_app/views/patient_update_view.dart';
+import 'package:covid_result_app/views/qr_scanner_view.dart';
 import 'package:covid_result_app/widgets/home_view_widgets/qr_scanner_button.dart';
 import 'package:covid_result_app/widgets/patient_form_field.dart';
 import 'package:covid_result_app/widgets/text_widget_big.dart';
@@ -198,7 +199,9 @@ class _HomeViewState extends State<HomeView> {
                 ),
                 const SizedBox(height: 20),
                 QrScannerButton(
-                  onTap: scanQrData,
+                  onTap: () {
+                    Navigator.of(context).pushNamed(QrScannerView.routeName);
+                  },
                 ),
               ],
             ),

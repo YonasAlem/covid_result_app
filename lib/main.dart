@@ -30,9 +30,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Covid Result',
-      theme: ThemeData(
-        fontFamily: 'Regular',
-      ),
+      theme: ThemeData(fontFamily: 'Regular'),
       builder: EasyLoading.init(),
       home: const FirstScreenHandler(),
       onGenerateRoute: (RouteSettings settings) {

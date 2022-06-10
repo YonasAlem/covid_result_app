@@ -16,7 +16,7 @@ class QrScannerButton extends StatelessWidget {
       shadowColor: Colors.black,
       elevation: 10,
       child: InkWell(
-        onTap: () {},
+        onTap: onTap,
         borderRadius: BorderRadius.circular(15),
         child: Container(
           padding: const EdgeInsets.all(10),
