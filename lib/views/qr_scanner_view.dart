@@ -136,6 +136,7 @@ class _QrScannerViewState extends State<QrScannerView> {
                         }
                       } on SocketException catch (_) {
                         setState(() => barcode = null);
+                        EasyLoading.dismiss();
                         displaySnackBar(
                           context: context,
                           text: 'No internet connection found!',
