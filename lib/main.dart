@@ -1,7 +1,7 @@
 import 'package:covid_result_app/services/auth_services/auth_services.dart';
 import 'package:covid_result_app/services/auth_services/auth_user.dart';
 import 'package:covid_result_app/views/full_screen_qr_view.dart';
-import 'package:covid_result_app/views/home_view.dart';
+import 'package:covid_result_app/views/home_view/home_view.dart';
 import 'package:covid_result_app/views/patient_list_view.dart';
 import 'package:covid_result_app/views/patient_register_view.dart';
 import 'package:covid_result_app/views/patient_update_view.dart';
@@ -20,6 +20,23 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
   runApp(const MyApp());
+  loading();
+}
+
+loading() {
+  EasyLoading.instance
+    ..displayDuration = const Duration(milliseconds: 2000)
+    ..indicatorType = EasyLoadingIndicatorType.fadingCircle
+    ..loadingStyle = EasyLoadingStyle.custom
+    ..indicatorSize = 35.0
+    ..radius = 10.0
+    ..maskColor = Colors.transparent
+    ..maskType = EasyLoadingMaskType.black
+    ..backgroundColor = Colors.black
+    ..indicatorColor = Colors.white
+    ..textColor = Colors.white
+    ..userInteractions = false
+    ..dismissOnTap = false;
 }
 
 class MyApp extends StatelessWidget {

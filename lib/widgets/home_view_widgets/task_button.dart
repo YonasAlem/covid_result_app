@@ -1,20 +1,45 @@
 import 'package:flutter/material.dart';
 
-class TaskButton extends StatelessWidget {
-  const TaskButton(
-      {Key? key, this.color, this.icon, required this.title, required this.desc, this.onTap})
-      : super(key: key);
+enum TaskType { register, update, viewAll, delete }
 
-  final Color? color;
-  final IconData? icon;
-  final String title;
-  final String desc;
+class TaskButton extends StatelessWidget {
+  TaskButton({Key? key, this.onTap, required this.taskType}) : super(key: key);
+
   final Function()? onTap;
+
+  final TaskType taskType;
+
+  final Map<TaskType, Map<String, Object>> values = {
+    TaskType.register: {
+      "icon": Icons.post_add,
+      "title": "Register",
+      "description": "Create new patient record.",
+      "color": const Color(0xFF628ec5),
+    },
+    TaskType.update: {
+      "icon": Icons.update_rounded,
+      "title": "Update",
+      "description": "Alter an existing record.",
+      "color": const Color(0xffb774bd),
+    },
+    TaskType.viewAll: {
+      "icon": Icons.view_list_rounded,
+      "title": "View All",
+      "description": "Display all records from database.",
+      "color": const Color(0xFFdb7634),
+    },
+    TaskType.delete: {
+      "icon": Icons.delete_outline,
+      "title": "Delete",
+      "description": "Remove an existing record from database.",
+      "color": const Color(0xFF628ec5),
+    },
+  };
 
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: color,
+      color: values[taskType]!["color"] as Color,
       borderRadius: BorderRadius.circular(15),
       shadowColor: Colors.black,
       elevation: 10,
@@ -29,13 +54,13 @@ class TaskButton extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Icon(
-                icon,
+                values[taskType]!["icon"] as IconData,
                 color: Colors.white,
                 size: 28,
               ),
               const SizedBox(height: 10),
               Text(
-                title,
+                values[taskType]!["title"] as String,
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 16,
@@ -45,7 +70,7 @@ class TaskButton extends StatelessWidget {
               ),
               const SizedBox(height: 5),
               Text(
-                desc,
+                values[taskType]!["description"] as String,
                 style: const TextStyle(
                   color: Colors.white70,
                   fontSize: 10,

@@ -6,7 +6,7 @@ import 'package:flutter_svg/svg.dart';
 
 import '../services/auth_services/auth_services.dart';
 import '../utils/colors.dart';
-import 'home_view.dart';
+import 'home_view/home_view.dart';
 import 'login_view.dart';
 
 class VerifyView extends StatefulWidget {

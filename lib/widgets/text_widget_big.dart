@@ -13,7 +13,7 @@ class TextWidgetBig extends StatelessWidget {
       text,
       style: TextStyle(
         letterSpacing: 1,
-        fontSize: 22,
+        fontSize: 20,
         fontFamily: 'Bold',
         color: color ?? textColor,
       ),

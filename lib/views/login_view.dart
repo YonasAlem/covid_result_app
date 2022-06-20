@@ -16,7 +16,7 @@ import '../services/auth_services/auth_services.dart';
 import '../utils/colors.dart';
 import '../widgets/auth_views_widgets/auth_text_field.dart';
 import '../widgets/submit_button_big.dart';
-import 'home_view.dart';
+import 'home_view/home_view.dart';
 import 'verify_view.dart';
 
 class LoginView extends StatefulWidget {

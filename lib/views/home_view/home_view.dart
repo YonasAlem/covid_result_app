@@ -1,8 +1,10 @@
 import 'dart:io';
 
+import 'package:covid_result_app/enums/Widgets/loading_view.dart';
 import 'package:covid_result_app/enums/operation_status.dart';
 import 'package:covid_result_app/methods/my_app_bar.dart';
 import 'package:covid_result_app/utils/colors.dart';
+import 'package:covid_result_app/views/home_view/widgets/header_card.dart';
 import 'package:covid_result_app/views/patient_list_view.dart';
 import 'package:covid_result_app/views/patient_register_view.dart';
 import 'package:covid_result_app/views/patient_update_view.dart';
@@ -14,11 +16,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
-import '../services/auth_services/auth_services.dart';
-import '../services/db_services/database_services.dart';
-import '../widgets/home_view_widgets/task_button.dart';
-import '../methods/warning_dialog.dart';
-import 'login_view.dart';
+import '../../services/auth_services/auth_services.dart';
+import '../../services/db_services/database_services.dart';
+import '../../widgets/home_view_widgets/task_button.dart';
+import '../../methods/warning_dialog.dart';
+import '../login_view.dart';
 
 class HomeView extends StatefulWidget {
   static const String routeName = '/homeview/';
@@ -74,6 +76,14 @@ class _HomeViewState extends State<HomeView> {
     super.dispose();
   }
 
+  navigateToPatientListView() {
+    return Navigator.of(context).pushNamed(PatientListView.routeName);
+  }
+
+  navigateToPatientRegisterView() {
+    return Navigator.of(context).pushNamed(PatientRegisterView.routeName);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -122,41 +132,28 @@ class _HomeViewState extends State<HomeView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 20),
-                _headerCard(),
+                const HeaderCard(),
                 const SizedBox(height: 10),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 5),
-                  child: Text(
-                    'Tasks',
-                    style: TextStyle(
-                      color: textColor,
-                      fontSize: 20,
-                      letterSpacing: 1,
-                      fontFamily: 'Bold',
-                    ),
+                  child: TextWidgetBig(
+                    text: 'Tasks',
+                    color: textColor,
                   ),
                 ),
                 Row(
                   children: [
                     Expanded(
                       child: TaskButton(
-                        onTap: () => Navigator.of(context).pushNamed(
-                          PatientRegisterView.routeName,
-                        ),
-                        color: const Color(0xFF628ec5),
-                        icon: Icons.post_add,
-                        title: 'Register',
-                        desc: 'Create new patient record.',
+                        taskType: TaskType.register,
+                        onTap: navigateToPatientRegisterView,
                       ),
                     ),
                     const SizedBox(width: 20),
                     Expanded(
                       child: TaskButton(
+                        taskType: TaskType.update,
                         onTap: updatePatient,
-                        color: const Color(0xffb774bd),
-                        icon: Icons.update_rounded,
-                        title: 'Update',
-                        desc: 'Alter an existing record.',
                       ),
                     ),
                   ],
@@ -166,36 +163,23 @@ class _HomeViewState extends State<HomeView> {
                   children: [
                     Expanded(
                       child: TaskButton(
-                        onTap: () => Navigator.of(context).pushNamed(
-                          PatientListView.routeName,
-                        ),
-                        color: const Color(0xFFdb7634),
-                        icon: Icons.view_list_rounded,
-                        title: 'View All',
-                        desc: 'Display all records from database.',
+                        taskType: TaskType.viewAll,
+                        onTap: navigateToPatientListView,
                       ),
                     ),
                     const SizedBox(width: 20),
                     Expanded(
                       child: TaskButton(
+                        taskType: TaskType.delete,
                         onTap: deletePatient,
-                        icon: Icons.delete_outline,
-                        color: const Color(0xff8866cf),
-                        title: 'Delete',
-                        desc: 'Remove an existing record from database.',
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 30),
-                Text(
-                  'Find Records Using',
-                  style: TextStyle(
-                    color: textColor,
-                    fontSize: 20,
-                    letterSpacing: 1,
-                    fontFamily: 'Bold',
-                  ),
+                TextWidgetBig(
+                  text: 'Find Records Using',
+                  color: textColor,
                 ),
                 const SizedBox(height: 20),
                 QrScannerButton(
@@ -235,17 +219,18 @@ class _HomeViewState extends State<HomeView> {
               ),
               TextButton(
                 onPressed: () async {
-                  await EasyLoading.show(status: 'Finding patient');
+                  Navigator.pop(context);
+                  await loadingWidget(LoadingType.onProgress, message: "Searching...");
                   var result = await DatabaseServices.mongoDb().singlePatientData(
                     idNumber: idNumber.text,
                   );
 
                   if (result != OperationStatus.failed) {
-                    await EasyLoading.showSuccess('Patient found!');
+                    loadingWidget(LoadingType.dismiss);
                     var success = await warningDialog(
                       context: context,
-                      boxTitle: "Patinet found",
-                      boxDescription: "Name: ${result.fullName}",
+                      boxTitle: "Record Found",
+                      boxDescription: "Name: ${result.fullName.toString().toUpperCase()}",
                       cancleText: "Cancel",
                       okText: "Goto Update Page",
                     );
@@ -365,41 +350,5 @@ class _HomeViewState extends State<HomeView> {
         );
         if (shouldExit) exit(0);
     }
-  }
-
-  Container _headerCard() {
-    return Container(
-      height: 120,
-      width: double.maxFinite,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      decoration: BoxDecoration(
-        gradient: gradient1,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: const [boxShadow2],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          const SizedBox(height: 10),
-          const TextWidgetBig(
-            text: 'Attention!',
-            color: Colors.white,
-          ),
-          const SizedBox(height: 10),
-          Expanded(
-            child: Text(
-              'This product should be used only by proffesionals, specially for health care centers.',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.grey[200],
-                height: 1.3,
-                fontSize: 12,
-                letterSpacing: 1,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }

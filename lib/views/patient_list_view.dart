@@ -37,7 +37,6 @@ class _PatientListViewState extends State<PatientListView> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final List<PatientModel> patientList = snapshot.data as List<PatientModel>;
-
             return patientList.isEmpty
                 ? _buildEmptyPatientList()
                 : _buildPatientListView(patientList: patientList);
@@ -45,14 +44,14 @@ class _PatientListViewState extends State<PatientListView> {
           return Container(
             height: double.maxFinite,
             width: double.maxFinite,
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withOpacity(0.05),
             child: Center(
               child: Container(
-                width: 200,
-                height: 120,
+                width: 140,
+                height: 100,
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                 decoration: BoxDecoration(
-                  color: Colors.black87,
+                  color: const Color(0xFFdb7634),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Column(
@@ -65,7 +64,7 @@ class _PatientListViewState extends State<PatientListView> {
                     ),
                     SizedBox(height: 10),
                     Text(
-                      'Please wait while loading!',
+                      'Please wait...',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.white,

@@ -1,9 +1,7 @@
-import 'dart:developer';
 import 'dart:io';
 import 'package:covid_result_app/enums/hero_tags.dart';
 import 'package:covid_result_app/enums/loading_type.dart';
 import 'package:covid_result_app/methods/display_snackbar.dart';
-import 'package:covid_result_app/methods/display_toast.dart';
 import 'package:covid_result_app/methods/my_app_bar.dart';
 import 'package:covid_result_app/methods/share_image_to_others.dart';
 import 'package:covid_result_app/methods/warning_dialog.dart';
@@ -21,11 +19,9 @@ import '../methods/change_date.dart';
 import '../methods/register_patient_data.dart';
 import '../methods/save_image_to_gallery.dart';
 import '../models/patient_model.dart';
-import '../utils/colors.dart';
 import '../widgets/drop_down_menu.dart';
 import '../widgets/big_button.dart';
 import '../widgets/patient_form_field.dart';
-import '../widgets/qr_image_container.dart';
 import '../widgets/small_button.dart';
 import 'full_screen_qr_view.dart';
 

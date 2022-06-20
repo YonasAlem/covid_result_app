@@ -1,7 +1,7 @@
 import 'package:covid_result_app/methods/my_app_bar.dart';
 import 'package:covid_result_app/methods/update_patient_data.dart';
 import 'package:covid_result_app/services/db_services/database_services.dart';
-import 'package:covid_result_app/views/home_view.dart';
+import 'package:covid_result_app/views/home_view/home_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
