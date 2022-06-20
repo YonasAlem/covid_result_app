@@ -4,7 +4,11 @@ import 'package:covid_result_app/enums/Widgets/loading_view.dart';
 import 'package:covid_result_app/enums/operation_status.dart';
 import 'package:covid_result_app/methods/my_app_bar.dart';
 import 'package:covid_result_app/utils/colors.dart';
+import 'package:covid_result_app/views/home_view/widgets/big_text.dart';
+import 'package:covid_result_app/views/home_view/widgets/curved_background.dart';
+import 'package:covid_result_app/views/home_view/widgets/first_row_task_buttons.dart';
 import 'package:covid_result_app/views/home_view/widgets/header_card.dart';
+import 'package:covid_result_app/views/home_view/widgets/second_row_task_buttons.dart';
 import 'package:covid_result_app/views/patient_list_view.dart';
 import 'package:covid_result_app/views/patient_register_view.dart';
 import 'package:covid_result_app/views/patient_update_view.dart';
@@ -76,39 +80,17 @@ class _HomeViewState extends State<HomeView> {
     super.dispose();
   }
 
-  navigateToPatientListView() {
-    return Navigator.of(context).pushNamed(PatientListView.routeName);
-  }
-
-  navigateToPatientRegisterView() {
-    return Navigator.of(context).pushNamed(PatientRegisterView.routeName);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         Container(color: Colors.white),
-        Positioned(
-          bottom: 0,
-          left: 0,
-          right: 0,
-          child: Container(
-            height: 160,
-            decoration: BoxDecoration(
-              gradient: gradient1,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(50),
-                topRight: Radius.circular(50),
-              ),
-            ),
-          ),
-        ),
+        const CurvedBackground(),
         Scaffold(
           backgroundColor: Colors.transparent,
           appBar: appBar(
             elevation: 0,
-            title: 'Home View',
+            title: 'Welcome',
             statusBarIconBrightness: Brightness.dark,
             actions: [
               Padding(
@@ -134,58 +116,14 @@ class _HomeViewState extends State<HomeView> {
                 const SizedBox(height: 20),
                 const HeaderCard(),
                 const SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 5),
-                  child: TextWidgetBig(
-                    text: 'Tasks',
-                    color: textColor,
-                  ),
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TaskButton(
-                        taskType: TaskType.register,
-                        onTap: navigateToPatientRegisterView,
-                      ),
-                    ),
-                    const SizedBox(width: 20),
-                    Expanded(
-                      child: TaskButton(
-                        taskType: TaskType.update,
-                        onTap: updatePatient,
-                      ),
-                    ),
-                  ],
-                ),
+                const BigText(text: 'Tasks'),
+                const FirstRowTaskButtons(),
                 const SizedBox(height: 20),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TaskButton(
-                        taskType: TaskType.viewAll,
-                        onTap: navigateToPatientListView,
-                      ),
-                    ),
-                    const SizedBox(width: 20),
-                    Expanded(
-                      child: TaskButton(
-                        taskType: TaskType.delete,
-                        onTap: deletePatient,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 30),
-                TextWidgetBig(
-                  text: 'Find Records Using',
-                  color: textColor,
-                ),
-                const SizedBox(height: 20),
+                const SecondRowTaskButtons(),
+                const SizedBox(height: 10),
+                const BigText(text: 'Find Records Using'),
                 QrScannerButton(
-                  onTap: () {
-                    Navigator.of(context).pushNamed(QrScannerView.routeName);
-                  },
+                  onTap: () => Navigator.of(context).pushNamed(QrScannerView.routeName),
                 ),
               ],
             ),
@@ -201,58 +139,59 @@ class _HomeViewState extends State<HomeView> {
 
   Future<void> _displayTextInputDialog(BuildContext context) async {
     return showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            content: PatientFormField(
-              editingController: idNumber,
-              hintText: 'Enter id number',
-              activeBorderColor: const Color(0x55b774bd),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: const Text(
-                  "Cancel",
-                  style: TextStyle(color: secondaryColor),
-                ),
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          content: PatientFormField(
+            editingController: idNumber,
+            hintText: 'Enter id number',
+            activeBorderColor: const Color(0x55b774bd),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text(
+                "Cancel",
+                style: TextStyle(color: secondaryColor),
               ),
-              TextButton(
-                onPressed: () async {
-                  Navigator.pop(context);
-                  await loadingWidget(LoadingType.onProgress, message: "Searching...");
-                  var result = await DatabaseServices.mongoDb().singlePatientData(
-                    idNumber: idNumber.text,
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.pop(context);
+                await loadingWidget(LoadingType.onProgress, message: "Searching...");
+                var result = await DatabaseServices.mongoDb().singlePatientData(
+                  idNumber: idNumber.text,
+                );
+
+                if (result != OperationStatus.failed) {
+                  loadingWidget(LoadingType.dismiss);
+                  var success = await warningDialog(
+                    context: context,
+                    boxTitle: "Record Found",
+                    boxDescription: "Name: ${result.fullName.toString().toUpperCase()}",
+                    cancleText: "Cancel",
+                    okText: "Goto Update Page",
                   );
 
-                  if (result != OperationStatus.failed) {
-                    loadingWidget(LoadingType.dismiss);
-                    var success = await warningDialog(
-                      context: context,
-                      boxTitle: "Record Found",
-                      boxDescription: "Name: ${result.fullName.toString().toUpperCase()}",
-                      cancleText: "Cancel",
-                      okText: "Goto Update Page",
+                  if (success && mounted) {
+                    Navigator.of(context).pushReplacementNamed(
+                      PatientUpdateView.routeName,
+                      arguments: result,
                     );
-
-                    if (success && mounted) {
-                      Navigator.of(context).pushReplacementNamed(
-                        PatientUpdateView.routeName,
-                        arguments: result,
-                      );
-                    }
-                  } else {
-                    await EasyLoading.showError('Patient not found!');
                   }
-                },
-                child: Text(
-                  "Search",
-                  style: TextStyle(color: Colors.red.shade800),
-                ),
+                } else {
+                  await EasyLoading.showError('Patient not found!');
+                }
+              },
+              child: Text(
+                "Search",
+                style: TextStyle(color: Colors.red.shade800),
               ),
-            ],
-          );
-        });
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> _deletePatientData(BuildContext context) async {

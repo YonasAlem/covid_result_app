@@ -32,7 +32,7 @@ class TaskButton extends StatelessWidget {
       "icon": Icons.delete_outline,
       "title": "Delete",
       "description": "Remove an existing record from database.",
-      "color": const Color(0xFF628ec5),
+      "color": const Color(0xff8866cf),
     },
   };
 
